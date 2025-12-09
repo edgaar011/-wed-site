@@ -216,63 +216,28 @@
     
     @media (max-width: 768px) {
       .envelope-container {
-        width: 85%;
-        max-width: 350px;
-        height: 280px;
-      }
-      
-      .envelope-body {
-        width: 100%;
-        max-width: 330px;
+        width: 75%;
+        max-width: 280px;
         height: 220px;
-        padding: 35px 25px;
-      }
-      
-      .envelope-flap {
-        bottom: 220px;
-        border-left-width: calc(50% - 2px);
-        border-right-width: calc(50% - 2px);
-        border-bottom-width: 60px;
-      }
-      
-      .envelope-text {
-        font-size: 32px;
-      }
-      
-      .envelope-subtext {
-        font-size: 13px;
-      }
-      
-      .click-hint {
-        font-size: 16px;
-        bottom: 60px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .envelope-container {
-        width: 90%;
-        max-width: 300px;
-        height: 240px;
       }
       
       .envelope-body {
         width: 100%;
-        max-width: 285px;
-        height: 180px;
+        max-width: 260px;
+        height: 160px;
         padding: 25px 20px;
       }
       
       .envelope-flap {
-        bottom: 180px;
+        bottom: 160px;
         border-left-width: calc(50% - 2px);
         border-right-width: calc(50% - 2px);
-        border-bottom-width: 60px;
+        border-bottom-width: 50px;
       }
       
       .envelope-text {
-        font-size: 28px;
-        margin-bottom: 10px;
+        font-size: 26px;
+        margin-bottom: 8px;
       }
       
       .envelope-subtext {
@@ -281,13 +246,51 @@
       
       .click-hint {
         font-size: 14px;
-        bottom: 50px;
+        bottom: 40px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .envelope-container {
+        width: 80%;
+        max-width: 240px;
+        height: 180px;
+      }
+      
+      .envelope-body {
+        width: 100%;
+        max-width: 220px;
+        height: 130px;
+        padding: 20px 15px;
+      }
+      
+      .envelope-flap {
+        bottom: 130px;
+        border-left-width: calc(50% - 2px);
+        border-right-width: calc(50% - 2px);
+        border-bottom-width: 45px;
+      }
+      
+      .envelope-text {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      
+      .envelope-subtext {
+        font-size: 11px;
+      }
+      
+      .click-hint {
+        font-size: 12px;
+        bottom: 30px;
       }
     }
 
     /* Navigation */
     nav {
-      position: relative;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
       background: rgba(92, 31, 42, 0.95);
       backdrop-filter: blur(10px);
@@ -324,7 +327,7 @@
       align-items: center;
       padding: 20px;
       background: #5C1F2A;
-      margin-top: 0;
+      margin-top: 60px;
       position: relative;
       z-index: 10;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -396,6 +399,7 @@
       padding: 100px 20px 80px;
       background: #5C1F2A;
       position: relative;
+      margin-top: 60px;
     }
     
     .invitation-card {
@@ -731,35 +735,6 @@
       display: none;
     }
 
-    /* Parents Section */
-    .parents-section {
-      background: #5C1F2A;
-    }
-    
-    .parents-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      margin-top: 40px;
-    }
-    
-    .parent-group {
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .parent-group h4 {
-      color: #D4AF37;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-    
-    .parent-group p {
-      color: #E5C158;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
     /* Padrinos Section */
     .padrinos-grid {
       display: grid;
@@ -985,6 +960,33 @@
       border-radius: 12px;
       text-align: center;
     }
+    
+    .registry-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .registry-link {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(212, 175, 55, 0.2);
+      color: #D4AF37;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid #D4AF37;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    
+    .registry-link:hover {
+      background: rgba(212, 175, 55, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    }
 
     /* RSVP Section */
     .rsvp-section {
@@ -1123,14 +1125,29 @@
         width: 100%;
       }
       
+      nav {
+        padding: 8px 0;
+      }
+      
       nav ul {
-        gap: 15px;
-        font-size: 13px;
-        padding: 0 10px;
+        gap: 12px;
+        font-size: 11px;
+        padding: 0 8px;
+      }
+      
+      nav a {
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+      
+      .hero {
+        margin-top: 50px;
+        padding: 60px 10px 50px;
       }
       
       header {
         padding: 15px 10px;
+        margin-top: 50px;
       }
       
       .lang-switcher {
@@ -1164,7 +1181,6 @@
         padding: 0 15px;
       }
       
-      .parents-grid,
       .padrinos-grid {
         grid-template-columns: 1fr;
         padding: 0 15px;
@@ -1325,19 +1341,30 @@
       }
       
       nav {
-        padding: 10px 0;
+        padding: 6px 0;
       }
       
       nav ul {
-        gap: 12px;
-        font-size: 12px;
-        padding: 0 8px;
+        gap: 8px;
+        font-size: 10px;
+        padding: 0 5px;
         flex-wrap: wrap;
+      }
+      
+      nav a {
+        font-size: 10px;
+        padding: 3px 6px;
+      }
+      
+      .hero {
+        margin-top: 45px;
+        padding: 40px 8px 35px;
       }
       
       header {
         padding: 12px 8px;
         gap: 12px;
+        margin-top: 45px;
       }
       
       header h3 {
@@ -1472,25 +1499,21 @@
         padding: 0 8px;
       }
       
-      .parents-grid,
       .padrinos-grid {
         gap: 20px;
         margin-top: 25px;
         padding: 0 10px;
       }
       
-      .parent-group,
       .padrino-item {
         padding: 15px;
       }
       
-      .parent-group h4,
       .padrino-item h4 {
         font-size: 15px;
         margin-bottom: 8px;
       }
       
-      .parent-group p,
       .padrino-item p {
         font-size: 12px;
       }
@@ -1552,6 +1575,20 @@
       .dress-code p {
         font-size: 13px;
         line-height: 1.6;
+      }
+      
+      .registry-links {
+        gap: 12px;
+        margin-top: 20px;
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .registry-link {
+        padding: 10px 20px;
+        font-size: 13px;
+        width: 90%;
+        max-width: 250px;
       }
       
       .rsvp-section {
@@ -1713,9 +1750,10 @@
   <!-- Navigation -->
   <nav>
     <ul>
-      <li><a href="#love-story" id="nav-invitation">Love Story</a></li>
+      <li><a href="#directions" id="nav-directions">Directions</a></li>
       <li><a href="#schedule" id="nav-schedule">Schedule</a></li>
-      <li><a href="#recommendations" id="nav-recommendations">Recommendations</a></li>
+      <li><a href="#attire" id="nav-attire">Attire</a></li>
+      <li><a href="#rsvp-section" id="nav-rsvp">RSVP</a></li>
     </ul>
   </nav>
 
@@ -1799,24 +1837,9 @@
 
   <div class="divider fade-in"></div>
 
-  <!-- Parents Section -->
-  <section class="parents-section fade-in">
-    <h2 id="parents-title">Blessed by Love & Family</h2>
-    <p style="text-align: center; color: #E5C158; font-style: italic; margin-bottom: 40px; font-size: 18px;">With the blessing of God and our families</p>
-    <div class="parents-grid">
-      <div class="parent-group">
-        <h4 id="bride-parents-label">Jasmin's Family</h4>
-        <p id="bride-parents">[Bride's Parents Names]</p>
-      </div>
-      <div class="parent-group">
-        <h4 id="groom-parents-label">Edgar's Family</h4>
-        <p id="groom-parents">[Groom's Parents Names]</p>
-      </div>
-    </div>
-  </section>
-
-  <div class="divider fade-in"></div>
-
+  <!-- Directions Section -->
+  <div id="directions"></div>
+  
   <!-- Ceremony Section -->
   <section class="location-section fade-in">
     <h3 id="ceremony-title">Ceremony</h3>
@@ -1853,12 +1876,11 @@
   <div class="divider fade-in"></div>
 
   <!-- Dress Code Section -->
-  <section class="fade-in" id="recommendations">
+  <section class="fade-in" id="attire">
     <h2 id="dress-title">What to Wear</h2>
     <div class="dress-code">
       <h3 id="dress-code-type">Semi-Formal</h3>
       <p id="dress-text">We'd love to see you dressed to celebrate! Semi-formal attire is perfect for our special day.</p>
-      <p id="dress-note" style="font-size: 15px; margin-top: 20px; font-style: italic; color: #E5C158;">Little ones are always welcome! We just ask that you keep a watchful eye on them throughout the celebration.</p>
     </div>
   </section>
 
@@ -1868,6 +1890,11 @@
   <section class="gift-section fade-in">
     <h2 id="gift-title">Gifts & Wishes</h2>
     <p id="gift-text">Having you there to share in our joy is the greatest gift we could ask for. If you'd like to celebrate with us in another way, we'll have a card box available at the reception.</p>
+    <div class="registry-links">
+      <a href="#" class="registry-link" id="registry-link-1" target="_blank">[Registry Name 1]</a>
+      <a href="#" class="registry-link" id="registry-link-2" target="_blank">[Registry Name 2]</a>
+      <a href="#" class="registry-link" id="registry-link-3" target="_blank">[Registry Name 3]</a>
+    </div>
   </section>
 
   <div class="divider fade-in"></div>
@@ -1912,7 +1939,6 @@
   <footer>
     <h2 id="footer-couple">Jasmin & Edgar</h2>
     <p class="date" id="footer-date">November 14th, 2026</p>
-    <p class="contact" id="footer-contact">www.yourwebsite.com</p>
   </footer>
 
   <script>
@@ -1944,9 +1970,10 @@
     function updateLanguageText() {
       if (!english) {
         // Navigation
-        document.getElementById("nav-invitation").innerText = "Historia de amor";
+        document.getElementById("nav-directions").innerText = "Direcciones";
         document.getElementById("nav-schedule").innerText = "Cronograma";
-        document.getElementById("nav-recommendations").innerText = "Recomendaciones";
+        document.getElementById("nav-attire").innerText = "Vestimenta";
+        document.getElementById("nav-rsvp").innerText = "RSVP";
         
         // Header
         document.getElementById("lang-title").innerText = "Invitación de Boda";
@@ -1963,11 +1990,6 @@
         document.getElementById("label-hours").innerText = "Horas";
         document.getElementById("label-mins").innerText = "Minutos";
         document.getElementById("label-secs").innerText = "Segundos";
-        
-        // Parents
-        document.getElementById("parents-title").innerText = "Bendecidos por el Amor y la Familia";
-        document.getElementById("bride-parents-label").innerText = "Familia de Jasmin";
-        document.getElementById("groom-parents-label").innerText = "Familia de Edgar";
         
         // Ceremony
         document.getElementById("ceremony-title").innerText = "Ceremonia";
@@ -1988,11 +2010,13 @@
         document.getElementById("dress-title").innerText = "Qué Usar";
         document.getElementById("dress-code-type").innerText = "Semi-Formal";
         document.getElementById("dress-text").innerText = "¡Nos encantaría verte vestido para celebrar! El atuendo semi-formal es perfecto para nuestro día especial.";
-        document.getElementById("dress-note").innerText = "¡Los pequeños siempre son bienvenidos! Solo les pedimos que los vigilen durante toda la celebración.";
         
         // Gift
         document.getElementById("gift-title").innerText = "Regalos y Deseos";
         document.getElementById("gift-text").innerText = "Tenerte allí para compartir nuestra alegría es el mejor regalo que podríamos pedir. Si deseas celebrar con nosotros de otra manera, tendremos un buzón de tarjetas disponible en la recepción.";
+        document.getElementById("registry-link-1").innerText = "[Lista de Registro 1]";
+        document.getElementById("registry-link-2").innerText = "[Lista de Registro 2]";
+        document.getElementById("registry-link-3").innerText = "[Lista de Registro 3]";
         
         // Love Story
         document.getElementById("story-title").innerText = "Nuestra Historia de Amor";
@@ -2024,9 +2048,10 @@
         document.getElementById("footer-date").innerText = "14 · nov · 26";
       } else {
         // Navigation
-        document.getElementById("nav-invitation").innerText = "Love Story";
+        document.getElementById("nav-directions").innerText = "Directions";
         document.getElementById("nav-schedule").innerText = "Schedule";
-        document.getElementById("nav-recommendations").innerText = "Recommendations";
+        document.getElementById("nav-attire").innerText = "Attire";
+        document.getElementById("nav-rsvp").innerText = "RSVP";
         
         // Header
         document.getElementById("lang-title").innerText = "Wedding Invitation";
@@ -2043,11 +2068,6 @@
         document.getElementById("label-hours").innerText = "Hours";
         document.getElementById("label-mins").innerText = "Minutes";
         document.getElementById("label-secs").innerText = "Seconds";
-        
-        // Parents
-        document.getElementById("parents-title").innerText = "Blessed by Love & Family";
-        document.getElementById("bride-parents-label").innerText = "Jasmin's Family";
-        document.getElementById("groom-parents-label").innerText = "Edgar's Family";
         
         // Ceremony
         document.getElementById("ceremony-title").innerText = "Ceremony";
@@ -2068,11 +2088,13 @@
         document.getElementById("dress-title").innerText = "What to Wear";
         document.getElementById("dress-code-type").innerText = "Semi-Formal";
         document.getElementById("dress-text").innerText = "We'd love to see you dressed to celebrate! Semi-formal attire is perfect for our special day.";
-        document.getElementById("dress-note").innerText = "Little ones are always welcome! We just ask that you keep a watchful eye on them throughout the celebration.";
         
         // Gift
         document.getElementById("gift-title").innerText = "Gifts & Wishes";
         document.getElementById("gift-text").innerText = "Having you there to share in our joy is the greatest gift we could ask for. If you'd like to celebrate with us in another way, we'll have a card box available at the reception.";
+        document.getElementById("registry-link-1").innerText = "[Registry Name 1]";
+        document.getElementById("registry-link-2").innerText = "[Registry Name 2]";
+        document.getElementById("registry-link-3").innerText = "[Registry Name 3]";
         
         // Love Story
         document.getElementById("story-title").innerText = "Our Love Story";
