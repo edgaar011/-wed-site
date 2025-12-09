@@ -1050,49 +1050,98 @@
 
     /* Responsive */
     @media (max-width: 768px) {
+      body {
+        overflow-x: hidden;
+        width: 100%;
+      }
+      
       nav ul {
-        gap: 20px;
+        gap: 15px;
+        font-size: 13px;
+        padding: 0 10px;
+      }
+      
+      header {
+        padding: 15px 10px;
+      }
+      
+      .lang-switcher {
+        width: 100%;
+        max-width: 280px;
+      }
+      
+      .lang-btn {
+        padding: 8px 15px;
         font-size: 14px;
+        min-width: 90px;
+      }
+      
+      .hero {
+        padding: 60px 10px 50px;
       }
       
       .hero h1 {
-        font-size: 32px;
+        font-size: 40px;
+        margin: 15px 0;
       }
       
       section h2 {
-        font-size: 28px;
+        font-size: 24px;
+        padding: 0 15px;
       }
       
       .parents-grid,
       .padrinos-grid {
         grid-template-columns: 1fr;
+        padding: 0 15px;
       }
       
-      .invitation-card,
-      .countdown-card {
-        max-width: 90%;
-        padding: 60px 35px;
-        margin: 0 10px;
+      .invitation-card {
+        max-width: 95%;
+        width: 100%;
+        padding: 50px 25px;
+        margin: 0 auto;
       }
       
-      .invitation-card::after,
-      .countdown-card::after {
+      .invitation-card::before {
+        top: 25px;
+        left: 25px;
+        right: 25px;
+        bottom: 25px;
+      }
+      
+      .invitation-card::after {
+        font-size: 24px;
+        top: -15px;
+      }
+      
+      .hero h1 .name-separator {
         font-size: 28px;
-        top: -18px;
-      }
-      
-      .hero h1 {
-        font-size: 48px;
       }
       
       .hero .invitation-text {
         font-size: 14px;
+        margin: 20px 0;
+        padding: 0 10px;
+      }
+      
+      .hero .date-text {
+        font-size: 16px;
+        padding: 0 10px;
       }
       
       .hero-photo {
-        max-width: 85%;
-        height: 280px;
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        max-height: 300px;
         margin: 20px auto;
+        object-fit: cover;
+      }
+      
+      .calendar-btn {
+        font-size: 14px;
+        padding: 10px 20px;
       }
       
       .countdown-section {
@@ -1104,29 +1153,87 @@
       }
       
       .countdown-card {
-        padding: 20px 15px;
-        min-width: 200px;
+        padding: 15px 12px;
+        min-width: 180px;
+        max-width: calc(100vw - 20px);
       }
       
       .countdown-section h2 {
-        font-size: 24px;
-        margin-bottom: 15px;
+        font-size: 20px;
+        margin-bottom: 12px;
       }
       
       .countdown {
-        gap: 8px;
+        gap: 6px;
       }
       
       .countdown-number {
-        font-size: 22px;
+        font-size: 20px;
       }
       
       .countdown-label {
-        font-size: 9px;
+        font-size: 8px;
       }
       
       .countdown-item {
-        min-width: 40px;
+        min-width: 35px;
+      }
+      
+      section {
+        padding: 40px 15px;
+      }
+      
+      .location-section {
+        padding: 30px 15px;
+        margin: 0 10px;
+      }
+      
+      .itinerary-item {
+        padding: 15px;
+        margin: 10px 15px;
+        font-size: 14px;
+      }
+      
+      .dress-code {
+        padding: 25px 15px;
+        margin: 0 15px;
+      }
+      
+      .rsvp-section {
+        padding: 40px 15px;
+      }
+      
+      .rsvp-form {
+        padding: 20px 15px;
+      }
+      
+      input, textarea {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px;
+        font-size: 14px;
+      }
+      
+      button {
+        padding: 12px 25px;
+        font-size: 14px;
+      }
+      
+      .photo {
+        margin: 15px;
+        height: 200px;
+      }
+      
+      footer {
+        padding: 40px 15px;
+      }
+      
+      footer h2 {
+        font-size: 28px;
+      }
+      
+      footer .date {
+        font-size: 18px;
       }
     }
   </style>
