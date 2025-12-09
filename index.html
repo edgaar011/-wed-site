@@ -1068,12 +1068,18 @@
       .lang-switcher {
         width: 100%;
         max-width: 280px;
+        margin: 0 auto;
       }
       
       .lang-btn {
         padding: 8px 15px;
         font-size: 14px;
         min-width: 90px;
+        flex: 1;
+      }
+      
+      .lang-indicator {
+        width: 50%;
       }
       
       .hero {
@@ -1264,14 +1270,24 @@
       }
       
       .lang-switcher {
-        max-width: 240px;
+        max-width: 260px;
+        width: 100%;
         padding: 3px;
+        margin: 0 auto;
       }
       
       .lang-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-        min-width: 75px;
+        padding: 8px 10px;
+        font-size: 13px;
+        min-width: 0;
+        flex: 1;
+        white-space: nowrap;
+      }
+      
+      .lang-indicator {
+        width: 50%;
+        height: calc(100% - 6px);
+        top: 3px;
       }
       
       .hero {
@@ -1642,7 +1658,7 @@
       <p class="invitation-text" id="invitation-text">Join us as we celebrate our love and begin our journey together as one</p>
       <p class="date-text" id="date-line">November 14, 2026 at 5:00 PM</p>
       <div style="margin-top: 30px;">
-        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Jasmin+%26+Edgar+Wedding&dates=20261114T170000/20261114T230000&details=Join+us+as+we+celebrate+our+love" target="_blank" class="calendar-btn" id="calendar-link">📅 Add to Calendar</a>
+        <a href="#" onclick="addToCalendar(event); return false;" class="calendar-btn" id="calendar-link">📅 Add to Calendar</a>
       </div>
     </div>
   </section>
@@ -2145,6 +2161,55 @@
 
     setInterval(updateCountdown, 1000);
     updateCountdown();
+    
+    // ADD TO CALENDAR - Device Detection
+    function addToCalendar(event) {
+      event.preventDefault();
+      
+      // Detect if user is on iOS/Mac (Apple device)
+      const isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      
+      // Event details
+      const eventTitle = encodeURIComponent("Jasmin & Edgar Wedding");
+      const eventDate = "20261114";
+      const eventStartTime = "170000";
+      const eventEndTime = "230000";
+      const eventDetails = encodeURIComponent("Join us as we celebrate our love and begin our journey together as one");
+      const eventLocation = encodeURIComponent("Wedding Venue");
+      
+      if (isApple) {
+        // Apple Calendar (iCal format)
+        const startDate = `${eventDate}T${eventStartTime}`;
+        const endDate = `${eventDate}T${eventEndTime}`;
+        const icsContent = [
+          "BEGIN:VCALENDAR",
+          "VERSION:2.0",
+          "PRODID:-//Wedding Invitation//EN",
+          "BEGIN:VEVENT",
+          `DTSTART:${startDate.replace(/-/g, '')}`,
+          `DTEND:${endDate.replace(/-/g, '')}`,
+          `SUMMARY:${eventTitle}`,
+          `DESCRIPTION:${eventDetails}`,
+          `LOCATION:${eventLocation}`,
+          "END:VEVENT",
+          "END:VCALENDAR"
+        ].join("\r\n");
+        
+        // Create blob and download
+        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "wedding-invitation.ics";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        // Google Calendar
+        const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${eventTitle}&dates=${eventDate}T${eventStartTime}/${eventDate}T${eventEndTime}&details=${eventDetails}&location=${eventLocation}`;
+        window.open(googleCalendarUrl, "_blank");
+      }
+    }
   </script>
 </body>
 </html>
