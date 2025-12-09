@@ -213,6 +213,77 @@
         font-size: 14px;
       }
     }
+    
+    @media (max-width: 768px) {
+      .envelope-container {
+        width: 85%;
+        max-width: 350px;
+        height: 280px;
+      }
+      
+      .envelope-body {
+        width: 100%;
+        max-width: 330px;
+        height: 220px;
+        padding: 35px 25px;
+      }
+      
+      .envelope-flap {
+        bottom: 220px;
+        border-left-width: calc(50% - 2px);
+        border-right-width: calc(50% - 2px);
+        border-bottom-width: 60px;
+      }
+      
+      .envelope-text {
+        font-size: 32px;
+      }
+      
+      .envelope-subtext {
+        font-size: 13px;
+      }
+      
+      .click-hint {
+        font-size: 16px;
+        bottom: 60px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .envelope-container {
+        width: 90%;
+        max-width: 300px;
+        height: 240px;
+      }
+      
+      .envelope-body {
+        width: 100%;
+        max-width: 285px;
+        height: 180px;
+        padding: 25px 20px;
+      }
+      
+      .envelope-flap {
+        bottom: 180px;
+        border-left-width: calc(50% - 2px);
+        border-right-width: calc(50% - 2px);
+        border-bottom-width: 60px;
+      }
+      
+      .envelope-text {
+        font-size: 28px;
+        margin-bottom: 10px;
+      }
+      
+      .envelope-subtext {
+        font-size: 12px;
+      }
+      
+      .click-hint {
+        font-size: 14px;
+        bottom: 50px;
+      }
+    }
 
     /* Navigation */
     nav {
@@ -364,15 +435,8 @@
     }
     
     .invitation-card::after {
-      content: '✦';
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 36px;
-      color: #D4AF37;
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-      z-index: 10;
+      content: '';
+      display: none;
     }
     
     .invitation-card .decorative-line {
@@ -386,12 +450,8 @@
     
     .invitation-card .decorative-line::before,
     .invitation-card .decorative-line::after {
-      content: '✦';
-      position: absolute;
-      color: #D4AF37;
-      font-size: 14px;
-      top: -8px;
-      opacity: 0.7;
+      content: '';
+      display: none;
     }
     
     .invitation-card .decorative-line::before {
@@ -426,14 +486,15 @@
     
     .hero .invitation-text {
       font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      margin: 25px 0;
-      color: #E5C158;
-      font-style: normal;
+      font-size: 20px;
+      margin-top: 30px;
+      color: #D4AF37;
+      font-style: italic;
       font-weight: 400;
       line-height: 1.6;
       position: relative;
       z-index: 1;
+      letter-spacing: 2px;
     }
     
     .hero-photo {
@@ -519,14 +580,8 @@
     }
     
     .countdown-card::after {
-      content: '✦';
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 28px;
-      color: #D4AF37;
-      z-index: 10;
+      content: '';
+      display: none;
     }
     
     .countdown-section h2 {
@@ -590,6 +645,29 @@
       margin: 0 3px;
       flex-shrink: 0;
     }
+    
+    .countdown-rsvp-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: #D4AF37;
+      color: #5C1F2A;
+      border: 2px solid #D4AF37;
+      border-radius: 6px;
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .countdown-rsvp-btn:hover {
+      background: #E5C158;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    }
 
     /* Section Styling */
     section {
@@ -649,12 +727,8 @@
     }
     
     .divider::after {
-      content: '✨';
-      position: relative;
-      background: #5C1F2A;
-      padding: 0 20px;
-      font-size: 24px;
-      z-index: 1;
+      content: '';
+      display: none;
     }
 
     /* Parents Section */
@@ -724,14 +798,8 @@
     }
     
     .location-section::before {
-      content: '📍';
-      position: absolute;
-      top: -15px;
-      left: 30px;
-      font-size: 32px;
-      background: #722F37;
-      padding: 5px;
-      border-radius: 50%;
+      content: '';
+      display: none;
     }
     
     .location-section h3 {
@@ -1142,7 +1210,8 @@
         height: auto;
         max-height: 300px;
         margin: 20px auto;
-        object-fit: cover;
+        object-fit: contain;
+        object-position: center;
       }
       
       .calendar-btn {
@@ -1183,6 +1252,12 @@
       
       .countdown-item {
         min-width: 35px;
+      }
+      
+      .countdown-rsvp-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin-top: 15px;
       }
       
       section {
@@ -1325,8 +1400,11 @@
       
       .hero-photo {
         max-height: 220px;
+        height: auto;
         margin: 15px auto;
         border-width: 2px;
+        object-fit: contain;
+        object-position: center;
       }
       
       .invitation-card .decorative-line {
@@ -1554,6 +1632,12 @@
         margin: 0 2px;
       }
       
+      .countdown-rsvp-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        margin-top: 12px;
+      }
+      
       .divider {
         padding: 30px 15px;
       }
@@ -1656,9 +1740,9 @@
       <img src="IMG_6460.jpg" alt="Jasmin & Edgar" class="hero-photo" id="hero-photo" />
       <div class="decorative-line"></div>
       <p class="invitation-text" id="invitation-text">Join us as we celebrate our love and begin our journey together as one</p>
-      <p class="date-text" id="date-line">November 14, 2026 at 5:00 PM</p>
+      <p class="date-text" id="date-line">November 14, 2026</p>
       <div style="margin-top: 30px;">
-        <a href="#" onclick="addToCalendar(event); return false;" class="calendar-btn" id="calendar-link">📅 Add to Calendar</a>
+        <a href="#" onclick="addToCalendar(event); return false;" class="calendar-btn" id="calendar-link">Add to Calendar</a>
       </div>
     </div>
   </section>
@@ -1688,6 +1772,7 @@
           <div class="countdown-label" id="label-secs">Seconds</div>
         </div>
       </div>
+      <button class="countdown-rsvp-btn" onclick="scrollToRSVP()" id="countdown-rsvp-btn">RSVP</button>
     </div>
   </div>
 
@@ -1737,7 +1822,7 @@
     <h3 id="ceremony-title">Ceremony</h3>
     <p class="time" id="ceremony-time">2:30 PM</p>
     <p class="address" id="ceremony-location">[Ceremony Location]<br>[Address]</p>
-    <a href="#" class="map-link" id="ceremony-map" target="_blank">📍 Get Directions</a>
+    <a href="#" class="map-link" id="ceremony-map" target="_blank">Get Directions</a>
   </section>
 
   <!-- Reception Section -->
@@ -1745,7 +1830,7 @@
     <h3 id="reception-title">Reception</h3>
     <p class="time" id="reception-time">6:00 PM</p>
     <p class="address" id="reception-location">[Reception Venue]<br>[Address]</p>
-    <a href="#" class="map-link" id="reception-map" target="_blank">📍 Get Directions</a>
+    <a href="#" class="map-link" id="reception-map" target="_blank">Get Directions</a>
   </section>
 
   <div class="divider fade-in"></div>
@@ -1788,7 +1873,7 @@
   <div class="divider fade-in"></div>
 
   <!-- RSVP Section -->
-  <section class="rsvp-section fade-in">
+  <section class="rsvp-section fade-in" id="rsvp-section">
     <h2 id="rsvp-title">Will You Join Us?</h2>
     <p id="rsvp-subtitle">We can't wait to celebrate with you! Please let us know if you'll be there.</p>
     <button class="rsvp-btn" onclick="toggleRSVP()" id="rsvp-button">RSVP Here</button>
@@ -1870,7 +1955,7 @@
         document.getElementById("name1").innerText = "Jasmin Mendoza";
         document.getElementById("name2").innerText = "Edgar Sanchez";
         document.getElementById("invitation-text").innerText = "Acompáñanos mientras celebramos nuestro amor y comenzamos nuestro viaje juntos como uno";
-        document.getElementById("date-line").innerText = "14 de noviembre de 2026 a las 5:00 PM";
+        document.getElementById("date-line").innerText = "14 de noviembre de 2026";
         
         // Countdown
         document.getElementById("count-title").innerText = "Cuenta Regresiva";
@@ -1886,11 +1971,11 @@
         
         // Ceremony
         document.getElementById("ceremony-title").innerText = "Ceremonia";
-        document.getElementById("ceremony-map").innerText = "📍 Obtener Direcciones";
+        document.getElementById("ceremony-map").innerText = "Obtener Direcciones";
         
         // Reception
         document.getElementById("reception-title").innerText = "Recepción";
-        document.getElementById("reception-map").innerText = "📍 Obtener Direcciones";
+        document.getElementById("reception-map").innerText = "Obtener Direcciones";
         
         // Schedule
         document.getElementById("schedule-title").innerText = "Nuestro Día Especial";
@@ -1950,7 +2035,7 @@
         document.getElementById("name1").innerText = "Jasmin Mendoza";
         document.getElementById("name2").innerText = "Edgar Sanchez";
         document.getElementById("invitation-text").innerText = "Join us as we celebrate our love and begin our journey together as one";
-        document.getElementById("date-line").innerText = "November 14, 2026 at 5:00 PM";
+        document.getElementById("date-line").innerText = "November 14, 2026";
         
         // Countdown
         document.getElementById("count-title").innerText = "Counting Down";
@@ -1966,11 +2051,11 @@
         
         // Ceremony
         document.getElementById("ceremony-title").innerText = "Ceremony";
-        document.getElementById("ceremony-map").innerText = "📍 Get Directions";
+        document.getElementById("ceremony-map").innerText = "Get Directions";
         
         // Reception
         document.getElementById("reception-title").innerText = "Reception";
-        document.getElementById("reception-map").innerText = "📍 Get Directions";
+        document.getElementById("reception-map").innerText = "Get Directions";
         
         // Schedule
         document.getElementById("schedule-title").innerText = "Our Special Day";
@@ -2125,6 +2210,18 @@
         }
       });
     });
+    
+    // SCROLL TO RSVP SECTION
+    function scrollToRSVP() {
+      const rsvpSection = document.getElementById('rsvp-section') || document.querySelector('.rsvp-section');
+      if (rsvpSection) {
+        rsvpSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Open RSVP form after scrolling
+        setTimeout(() => {
+          toggleRSVP();
+        }, 500);
+      }
+    }
 
     // SCROLL ANIMATIONS
     const observer = new IntersectionObserver((entries) => {
