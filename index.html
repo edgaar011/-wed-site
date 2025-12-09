@@ -216,23 +216,23 @@
     
     @media (max-width: 768px) {
       .envelope-container {
-        width: 75%;
-        max-width: 280px;
-        height: 220px;
+        width: 70%;
+        max-width: 250px;
+        height: 200px;
       }
       
       .envelope-body {
         width: 100%;
-        max-width: 260px;
-        height: 160px;
-        padding: 25px 20px;
+        max-width: 230px;
+        height: 140px;
+        padding: 20px 15px;
       }
       
       .envelope-flap {
-        bottom: 160px;
-        border-left-width: calc(50% - 2px);
-        border-right-width: calc(50% - 2px);
-        border-bottom-width: 50px;
+        bottom: 140px;
+        border-left-width: calc(115px - 2px);
+        border-right-width: calc(115px - 2px);
+        border-bottom-width: 40px;
       }
       
       .envelope-text {
@@ -252,23 +252,23 @@
     
     @media (max-width: 480px) {
       .envelope-container {
-        width: 80%;
-        max-width: 240px;
-        height: 180px;
+        width: 70%;
+        max-width: 200px;
+        height: 160px;
       }
       
       .envelope-body {
         width: 100%;
-        max-width: 220px;
-        height: 130px;
-        padding: 20px 15px;
+        max-width: 185px;
+        height: 110px;
+        padding: 15px 12px;
       }
       
       .envelope-flap {
-        bottom: 130px;
-        border-left-width: calc(50% - 2px);
-        border-right-width: calc(50% - 2px);
-        border-bottom-width: 45px;
+        bottom: 110px;
+        border-left-width: calc(92.5px - 2px);
+        border-right-width: calc(92.5px - 2px);
+        border-bottom-width: 35px;
       }
       
       .envelope-text {
@@ -313,11 +313,31 @@
       font-size: 16px;
       font-weight: 400;
       letter-spacing: 1px;
-      transition: color 0.3s ease;
+      transition: all 0.3s ease;
+      padding: 5px 10px;
+      border-radius: 4px;
+      position: relative;
     }
     
     nav a:hover {
       color: #D4AF37;
+    }
+    
+    nav a.active {
+      color: #D4AF37;
+      background: rgba(212, 175, 55, 0.2);
+      font-weight: 500;
+    }
+    
+    nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 10px;
+      right: 10px;
+      height: 2px;
+      background: #D4AF37;
+      border-radius: 2px;
     }
 
     /* Header */
@@ -2233,6 +2253,75 @@
       });
     });
     
+    // ACTIVE NAVIGATION HIGHLIGHTING
+    function updateActiveNav() {
+      const sections = [
+        { id: 'schedule', navId: 'nav-schedule' },
+        { id: 'attire', navId: 'nav-attire' },
+        { id: 'rsvp-section', navId: 'nav-rsvp' }
+      ];
+      
+      // Remove active from all nav links first
+      document.getElementById('nav-directions')?.classList.remove('active');
+      sections.forEach(({ navId }) => {
+        document.getElementById(navId)?.classList.remove('active');
+      });
+      
+      const scrollPosition = window.scrollY + 150; // Offset for fixed nav
+      let activeSection = null;
+      
+      // Check if we're in the ceremony/reception sections (Directions)
+      const locationSections = document.querySelectorAll('.location-section');
+      if (locationSections.length > 0) {
+        const firstLocation = locationSections[0];
+        const lastLocation = locationSections[locationSections.length - 1];
+        const directionsStart = firstLocation.offsetTop;
+        const directionsEnd = lastLocation.offsetTop + lastLocation.offsetHeight;
+        
+        if (scrollPosition >= directionsStart && scrollPosition < directionsEnd) {
+          activeSection = 'nav-directions';
+        }
+      }
+      
+      // If not in directions, check other sections
+      if (!activeSection) {
+        sections.forEach(({ id, navId }) => {
+          const section = document.getElementById(id);
+          if (section) {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+              activeSection = navId;
+            }
+          }
+        });
+      }
+      
+      // If no section found, check if we're past the last section
+      if (!activeSection && sections.length > 0) {
+        const lastSection = document.getElementById(sections[sections.length - 1].id);
+        if (lastSection && window.scrollY + window.innerHeight > lastSection.offsetTop + lastSection.offsetHeight) {
+          activeSection = sections[sections.length - 1].navId;
+        }
+      }
+      
+      // If still at top of page, highlight directions
+      if (!activeSection && window.scrollY < 150) {
+        activeSection = 'nav-directions';
+      }
+      
+      // Highlight the active section
+      if (activeSection) {
+        document.getElementById(activeSection)?.classList.add('active');
+      }
+    }
+    
+    // Update active nav on scroll
+    window.addEventListener('scroll', updateActiveNav);
+    // Update on page load
+    updateActiveNav();
+    
     // SCROLL TO RSVP SECTION
     function scrollToRSVP() {
       const rsvpSection = document.getElementById('rsvp-section') || document.querySelector('.rsvp-section');
@@ -2245,13 +2334,17 @@
       }
     }
 
-    // SCROLL ANIMATIONS
+    // SCROLL ANIMATIONS - Keep elements visible once they've faded in
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
         }
+        // Once visible, keep it visible even when scrolling past
+        // Don't remove the 'visible' class when element leaves viewport
       });
+    }, {
+      threshold: 0.1 // Trigger when 10% of element is visible
     });
 
     document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
