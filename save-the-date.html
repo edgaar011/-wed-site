@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Save the Date — Jasmin & Edgar, November 14, 2026" />
+  <meta property="og:title" content="Save the Date — Jasmin & Edgar" />
+  <meta property="og:description" content="November 14, 2026 · Formal invitation to follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="IMG_6460.jpg" />
+  <title>Save the Date — Jasmin & Edgar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: #3D1519;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.02) 0%, transparent 50%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(212, 175, 55, 0.01) 2px,
+          rgba(212, 175, 55, 0.01) 4px
+        );
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ── Envelope Overlay ── */
+    .envelope-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #5C1F2A 0%, #3D1519 100%);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .envelope-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .envelope-container {
+      position: relative;
+      width: 500px;
+      height: 400px;
+    }
+
+    .envelope {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .envelope-body {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 480px;
+      height: 320px;
+      background: #F5F5F0;
+      border: 3px solid #FFFFFF;
+      border-radius: 2px;
+      box-shadow:
+        0 15px 50px rgba(0, 0, 0, 0.4),
+        inset 0 0 0 1px rgba(212, 175, 55, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 40px;
+      z-index: 1;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      bottom: 320px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 240px solid transparent;
+      border-right: 240px solid transparent;
+      border-bottom: 80px solid #E8E8E0;
+      transform-origin: bottom center;
+      transition: transform 1s ease-out, opacity 1s ease-out;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .envelope.opened .envelope-flap {
+      transform: translateX(-50%) rotateX(180deg);
+      opacity: 0;
+    }
+
+    .envelope-text {
+      color: #5C1F2A;
+      font-family: 'Great Vibes', cursive;
+      font-size: 44px;
+      text-align: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .envelope-label {
+      color: #722F37;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      text-align: center;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 6px;
+    }
+
+    .envelope-subtext {
+      color: #722F37;
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      text-align: center;
+      font-style: italic;
+      position: relative;
+      z-index: 2;
+    }
+
+    .click-hint {
+      position: absolute;
+      bottom: 80px;
+      color: #FFFFFF;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      text-align: center;
+      opacity: 0.7;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1;   }
+    }
+
+    /* ── Language switcher (header) ── */
+    .page-header {
+      width: 100%;
+      background: rgba(92, 31, 42, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      padding: 14px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .lang-switcher {
+      display: flex;
+      background: #722F37;
+      border: 2px solid #FFFFFF;
+      border-radius: 8px;
+      padding: 4px;
+      position: relative;
+    }
+
+    .lang-btn {
+      padding: 8px 20px;
+      border: none;
+      background: transparent;
+      color: #FFFFFF;
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.3s ease;
+      position: relative;
+      z-index: 2;
+      min-width: 90px;
+    }
+
+    .lang-btn.active { color: #5C1F2A; font-weight: 600; }
+    .lang-btn:not(.active):hover { color: #FFFFFF; }
+
+    .lang-indicator {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      height: calc(100% - 8px);
+      width: calc(50% - 4px);
+      background: #FFFFFF;
+      border-radius: 5px;
+      transition: left 0.3s ease;
+      z-index: 1;
+    }
+
+    .lang-indicator.spanish { left: calc(50%); }
+
+    /* ── Main card ── */
+    .main {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 20px 60px;
+    }
+
+    .card {
+      max-width: 600px;
+      width: 100%;
+      background: #5C1F2A;
+      border: 3px solid #FFFFFF;
+      border-radius: 4px;
+      padding: 70px 50px 60px;
+      text-align: center;
+      position: relative;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(212, 175, 55, 0.3);
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 1px,
+          rgba(212, 175, 55, 0.03) 1px,
+          rgba(212, 175, 55, 0.03) 2px
+        );
+    }
+
+    /* inner border inset */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 28px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .save-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      opacity: 0.85;
+      margin-bottom: 10px;
+    }
+
+    .couple-names {
+      font-family: 'Great Vibes', cursive;
+      font-size: 62px;
+      color: #FFFFFF;
+      font-weight: 400;
+      line-height: 1.25;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin: 4px 0 8px;
+    }
+
+    .couple-names .ampersand {
+      font-size: 42px;
+      opacity: 0.85;
+    }
+
+    .divider-line {
+      width: 120px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #FFFFFF, transparent);
+      margin: 28px auto;
+      opacity: 0.6;
+    }
+
+    /* ── Slideshow ── */
+    .slideshow {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      height: 370px;
+      margin: 0 auto 28px;
+      border-radius: 10px;
+      border: 2px solid #FFFFFF;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.9s ease;
+    }
+
+    .slide.active { opacity: 1; }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* prev / next arrows */
+    .slide-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(61, 21, 25, 0.55);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: #FFFFFF;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background 0.2s ease;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .slide-btn:hover { background: rgba(61, 21, 25, 0.85); }
+    .slide-btn.prev  { left: 10px; }
+    .slide-btn.next  { right: 10px; }
+
+    /* dot indicators */
+    .slide-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      z-index: 10;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.4);
+      border: 1px solid #FFFFFF;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .dot.active { background: #FFFFFF; }
+
+    .date-block {
+      margin: 10px 0 6px;
+    }
+
+    .date-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: #FFFFFF;
+      letter-spacing: 3px;
+      font-style: italic;
+    }
+
+    .location-hint {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      color: #FFFFFF;
+      letter-spacing: 1.5px;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    .divider-line.short {
+      width: 70px;
+      margin: 22px auto;
+    }
+
+    .formal-invite {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: #FFFFFF;
+      opacity: 0.75;
+      letter-spacing: 1px;
+    }
+
+    /* ── Countdown ── */
+    .countdown-wrap {
+      margin: 32px 0 10px;
+    }
+
+    .countdown-title {
+      font-family: 'Dancing Script', cursive;
+      font-size: 20px;
+      color: #FFFFFF;
+      margin-bottom: 16px;
+      opacity: 0.9;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cd-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 52px;
+    }
+
+    .cd-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      font-weight: 600;
+      color: #FFFFFF;
+      line-height: 1.1;
+    }
+
+    .cd-label {
+      font-size: 10px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .cd-sep {
+      color: #FFFFFF;
+      font-size: 22px;
+      opacity: 0.45;
+      align-self: center;
+      padding-bottom: 14px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      background: #722F37;
+      border-top: 3px solid #FFFFFF;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    footer .footer-names {
+      font-family: 'Great Vibes', cursive;
+      font-size: 32px;
+      color: #F5E8E8;
+      font-weight: 400;
+    }
+
+    footer .footer-date {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      color: #FFFFFF;
+      margin-top: 6px;
+      opacity: 0.85;
+      letter-spacing: 1px;
+    }
+
+    /* ── Fade-in ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .envelope-container { width: 90%; max-width: 400px; height: 300px; }
+      .envelope-body      { width: 100%; max-width: 380px; height: 240px; padding: 40px 30px; }
+      .envelope-flap      { bottom: 240px; border-left-width: calc(50% - 2px); border-right-width: calc(50% - 2px); border-bottom-width: 60px; }
+      .envelope-text      { font-size: 36px; }
+      .envelope-subtext   { font-size: 13px; }
+      .click-hint         { font-size: 14px; bottom: 40px; }
+
+      .card               { padding: 50px 25px 45px; }
+      .card::before       { inset: 18px; }
+      .couple-names       { font-size: 48px; }
+      .couple-names .ampersand { font-size: 32px; }
+      .date-text          { font-size: 18px; }
+      .slideshow          { max-height: 280px; height: 280px; }
+    }
+
+    @media (max-width: 480px) {
+      .envelope-container { width: 75%; max-width: 260px; height: 210px; }
+      .envelope-body      { width: 100%; max-width: 240px; height: 150px; padding: 22px 18px; }
+      .envelope-flap      { bottom: 150px; border-left-width: 120px; border-right-width: 120px; border-bottom-width: 44px; }
+      .envelope-text      { font-size: 26px; margin-bottom: 6px; }
+      .envelope-label     { font-size: 10px; }
+      .envelope-subtext   { font-size: 12px; }
+      .click-hint         { font-size: 12px; bottom: 30px; }
+
+      .card               { padding: 38px 18px 36px; }
+      .card::before       { inset: 13px; }
+      .save-label         { font-size: 11px; letter-spacing: 3px; }
+      .couple-names       { font-size: 38px; }
+      .couple-names .ampersand { font-size: 26px; }
+      .date-text          { font-size: 16px; letter-spacing: 2px; }
+      .location-hint      { font-size: 12px; }
+      .formal-invite      { font-size: 12px; }
+      .cd-num             { font-size: 22px; }
+      .cd-label           { font-size: 8px; }
+      .cd-item            { min-width: 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Envelope Overlay -->
+  <div class="envelope-overlay" id="envelope-overlay" onclick="openEnvelope()">
+    <div class="envelope-container">
+      <div class="envelope" id="envelope">
+        <div class="envelope-body">
+          <div class="envelope-label" id="env-label">Save the Date</div>
+          <div class="envelope-text">Jasmin &amp; Edgar</div>
+          <div class="envelope-subtext" id="env-subtext">Click to open</div>
+        </div>
+        <div class="envelope-flap"></div>
+      </div>
+    </div>
+    <div class="click-hint" id="click-hint">Click anywhere to open</div>
+  </div>
+
+  <!-- Header -->
+  <header class="page-header">
+    <div class="lang-switcher">
+      <div class="lang-indicator" id="lang-indicator"></div>
+      <button class="lang-btn active" id="btn-en" onclick="setLanguage(true)">English</button>
+      <button class="lang-btn"        id="btn-es" onclick="setLanguage(false)">Español</button>
+    </div>
+  </header>
+
+  <!-- Main card -->
+  <main class="main">
+    <div class="card fade-in">
+
+      <p class="save-label" id="save-label">Save the Date</p>
+
+      <h1 class="couple-names">
+        <span>Jasmin Mendoza</span>
+        <span class="ampersand">&amp;</span>
+        <span>Edgar Sanchez</span>
+      </h1>
+
+      <div class="divider-line"></div>
+
+      <!-- Slideshow — add more photos to the 'photos' array in the script below -->
+      <div class="slideshow" id="slideshow">
+        <!-- slides injected by JS -->
+        <button class="slide-btn prev" onclick="moveSlide(-1)" aria-label="Previous photo">&#8249;</button>
+        <button class="slide-btn next" onclick="moveSlide(1)"  aria-label="Next photo">&#8250;</button>
+        <div class="slide-dots" id="slide-dots"></div>
+      </div>
+
+      <div class="date-block">
+        <p class="date-text" id="date-text">November 14, 2026</p>
+        <p class="location-hint" id="location-hint">Houston, Texas</p>
+      </div>
+
+      <div class="divider-line short"></div>
+
+      <!-- Countdown -->
+      <div class="countdown-wrap">
+        <p class="countdown-title" id="cd-title">Counting Down</p>
+        <div class="countdown" id="countdown">
+          <div class="cd-item">
+            <div class="cd-num" id="cd-days">0</div>
+            <div class="cd-label" id="cd-label-days">Days</div>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-item">
+            <div class="cd-num" id="cd-hours">0</div>
+            <div class="cd-label" id="cd-label-hours">Hours</div>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-item">
+            <div class="cd-num" id="cd-mins">0</div>
+            <div class="cd-label" id="cd-label-mins">Minutes</div>
+          </div>
+          <span class="cd-sep">:</span>
+          <div class="cd-item">
+            <div class="cd-num" id="cd-secs">0</div>
+            <div class="cd-label" id="cd-label-secs">Seconds</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider-line short"></div>
+
+      <p class="formal-invite" id="formal-invite">Formal invitation to follow</p>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p class="footer-names" id="footer-names">Jasmin &amp; Edgar</p>
+    <p class="footer-date" id="footer-date">November 14th, 2026</p>
+  </footer>
+
+  <script>
+    // ── Language ──
+    let english = true;
+
+    const strings = {
+      en: {
+        envLabel:     'Save the Date',
+        envSubtext:   'Click to open',
+        clickHint:    'Click anywhere to open',
+        saveLabel:    'Save the Date',
+        dateText:     'November 14, 2026',
+        locationHint: 'Houston, Texas',
+        cdTitle:      'Counting Down',
+        days: 'Days', hours: 'Hours', mins: 'Minutes', secs: 'Seconds',
+        formalInvite: 'Formal invitation to follow',
+        footerNames:  'Jasmin & Edgar',
+        footerDate:   'November 14th, 2026',
+      },
+      es: {
+        envLabel:     'Reserva la Fecha',
+        envSubtext:   'Haz clic para abrir',
+        clickHint:    'Haz clic en cualquier lugar para abrir',
+        saveLabel:    'Reserva la Fecha',
+        dateText:     '14 de noviembre de 2026',
+        locationHint: 'Houston, Texas',
+        cdTitle:      'Cuenta Regresiva',
+        days: 'Días', hours: 'Horas', mins: 'Minutos', secs: 'Segundos',
+        formalInvite: 'La invitación formal llegará pronto',
+        footerNames:  'Jasmin & Edgar',
+        footerDate:   '14 · nov · 2026',
+      }
+    };
+
+    function setLanguage(isEnglish) {
+      english = isEnglish;
+      const s = isEnglish ? strings.en : strings.es;
+
+      document.getElementById('lang-indicator').classList.toggle('spanish', !isEnglish);
+      document.getElementById('btn-en').classList.toggle('active', isEnglish);
+      document.getElementById('btn-es').classList.toggle('active', !isEnglish);
+
+      document.getElementById('env-label').innerText     = s.envLabel;
+      document.getElementById('env-subtext').innerText   = s.envSubtext;
+      document.getElementById('click-hint').innerText    = s.clickHint;
+      document.getElementById('save-label').innerText    = s.saveLabel;
+      document.getElementById('date-text').innerText     = s.dateText;
+      document.getElementById('location-hint').innerText = s.locationHint;
+      document.getElementById('cd-title').innerText      = s.cdTitle;
+      document.getElementById('cd-label-days').innerText  = s.days;
+      document.getElementById('cd-label-hours').innerText = s.hours;
+      document.getElementById('cd-label-mins').innerText  = s.mins;
+      document.getElementById('cd-label-secs').innerText  = s.secs;
+      document.getElementById('formal-invite').innerText  = s.formalInvite;
+      document.getElementById('footer-names').innerText   = s.footerNames;
+      document.getElementById('footer-date').innerText    = s.footerDate;
+    }
+
+    // ── Slideshow ──
+    // Add your photo filenames here — just drop them in the same folder as this file
+    const photos = [
+      'IMG_6460.jpg',
+      '8-_DSC7257.jpg',
+      '21-_DSC7341.jpg',
+      '47-_DSC7309.jpg',
+      '61-_DSC7423.jpg',
+    ];
+
+    let currentSlide = 0;
+    let slideTimer;
+
+    function buildSlideshow() {
+      const container = document.getElementById('slideshow');
+      const dotsEl    = document.getElementById('slide-dots');
+
+      photos.forEach((src, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'slide' + (i === 0 ? ' active' : '');
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Jasmin & Edgar';
+        slide.appendChild(img);
+        container.insertBefore(slide, container.querySelector('.slide-btn'));
+
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(i);
+        dotsEl.appendChild(dot);
+      });
+
+      // Hide controls when only one photo
+      if (photos.length < 2) {
+        container.querySelector('.prev').style.display = 'none';
+        container.querySelector('.next').style.display = 'none';
+        dotsEl.style.display = 'none';
+      }
+    }
+
+    function goToSlide(n) {
+      const slides = document.querySelectorAll('.slide');
+      const dots   = document.querySelectorAll('.dot');
+      slides[currentSlide].classList.remove('active');
+      dots[currentSlide].classList.remove('active');
+      currentSlide = (n + photos.length) % photos.length;
+      slides[currentSlide].classList.add('active');
+      dots[currentSlide].classList.add('active');
+      resetTimer();
+    }
+
+    function moveSlide(dir) { goToSlide(currentSlide + dir); }
+
+    function resetTimer() {
+      clearInterval(slideTimer);
+      if (photos.length > 1) slideTimer = setInterval(() => moveSlide(1), 4500);
+    }
+
+    buildSlideshow();
+    resetTimer();
+
+    // ── Envelope ──
+    function openEnvelope() {
+      document.getElementById('envelope').classList.add('opened');
+      setTimeout(() => {
+        document.getElementById('envelope-overlay').classList.add('hidden');
+        document.querySelector('.fade-in').classList.add('visible');
+      }, 1200);
+    }
+
+    // Keyboard accessibility for envelope
+    document.getElementById('envelope-overlay').addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') openEnvelope();
+    });
+    document.getElementById('envelope-overlay').setAttribute('tabindex', '0');
+
+    // ── Countdown ──
+    function updateCountdown() {
+      const eventDate = new Date('November 14, 2026 17:00:00');
+      const diff = eventDate - new Date();
+
+      if (diff <= 0) {
+        document.getElementById('countdown').innerHTML =
+          '<div style="font-size:20px;color:#FFFFFF;">The big day is here!</div>';
+        return;
+      }
+
+      const days  = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff / 3600000) % 24);
+      const mins  = Math.floor((diff / 60000)   % 60);
+      const secs  = Math.floor((diff / 1000)    % 60);
+
+      document.getElementById('cd-days').innerText  = String(days).padStart(2, '0');
+      document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('cd-mins').innerText  = String(mins).padStart(2, '0');
+      document.getElementById('cd-secs').innerText  = String(secs).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
