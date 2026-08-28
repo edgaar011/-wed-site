@@ -7,7 +7,7 @@
   <meta property="og:title" content="Save the Date — Jasmin & Edgar" />
   <meta property="og:description" content="November 14, 2026 · Formal invitation to follow" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://jasminandedgar.com/images/47-_DSC7309.jpg" />
+  <meta property="og:image" content="https://jasminandedgar.com/images/IMG_6460.jpg" />
   <meta property="og:url" content="https://jasminandedgar.com" />
   <title>Save the Date — Jasmin & Edgar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -484,6 +484,26 @@
       letter-spacing: 1px;
     }
 
+    footer .footer-credit {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      color: #FFFFFF;
+      margin-top: 18px;
+      opacity: 0.7;
+      letter-spacing: 1px;
+    }
+
+    footer .footer-credit a {
+      color: #F5E8E8;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(245, 232, 232, 0.5);
+      transition: opacity 0.3s ease;
+    }
+
+    footer .footer-credit a:hover {
+      opacity: 0.75;
+    }
+
     /* ── Fade-in ── */
     .fade-in {
       opacity: 0;
@@ -627,6 +647,10 @@
   <footer>
     <p class="footer-names" id="footer-names">Jasmin &amp; Edgar</p>
     <p class="footer-date" id="footer-date">November 14th, 2026</p>
+    <p class="footer-credit">
+      <span id="footer-credit-label">Pictures by</span>
+      <a href="https://www.instagram.com/pharaohjenkins/" target="_blank" rel="noopener noreferrer">IG: pharaohjenkins</a>
+    </p>
   </footer>
 
   <script>
@@ -646,6 +670,7 @@
         formalInvite: 'Formal invitation to follow',
         footerNames:  'Jasmin & Edgar',
         footerDate:   'November 14th, 2026',
+        footerCredit: 'Pictures by',
       },
       es: {
         envLabel:     'Reserva la Fecha',
@@ -659,6 +684,7 @@
         formalInvite: 'La invitación formal llegará pronto',
         footerNames:  'Jasmin & Edgar',
         footerDate:   '14 · nov · 2026',
+        footerCredit: 'Fotos por',
       }
     };
 
@@ -684,6 +710,7 @@
       document.getElementById('formal-invite').innerText  = s.formalInvite;
       document.getElementById('footer-names').innerText   = s.footerNames;
       document.getElementById('footer-date').innerText    = s.footerDate;
+      document.getElementById('footer-credit-label').innerText = s.footerCredit;
     }
 
     // ── Slideshow ──
