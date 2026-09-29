@@ -409,7 +409,7 @@
     .intro { display: none; }
     .intro-on body { overflow: hidden; }
     .intro-on .hero-text > *, .intro-on .hero-photo img { animation-play-state: paused; }
-    .intro-on .intro {
+    .intro.sl-live, .intro-on .intro {
       position: fixed; inset: 0; z-index: 100;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px;
       padding: 24px;
@@ -506,6 +506,434 @@
       .hero-photo img, .env, .intro-hint { animation: none; }
       .burst { display: none; }
     }
+  
+    /* ---------- Del mediodía a la madrugada: the order of events goes from noon to night (tn-) ---------- */
+    .heading .tn-sub { margin-top: 14px; }
+    .tn-sky { display: none; }
+    @media screen {
+      .tn-on #schedule { position: relative; isolation: isolate; }
+      .tn-on .tn-sky { display: block; position: absolute; inset: 0; z-index: -1; contain: strict; pointer-events: none; background-color: var(--paper); }
+      .tn-stars { position: absolute; left: 0; right: 0; bottom: 0; top: var(--tn-night, 100%); }
+      .tn-stars i { position: absolute; width: 2px; height: 2px; margin: -1px 0 0 -1px; border-radius: 50%; background: var(--cream); box-shadow: 0 0 4px rgba(255, 248, 238, 0.5); opacity: 0.5; }
+
+      /* A breath of space above Baile, where the sky turns */
+      .tn-on .timeline li:not(.tn-night) + li.tn-night { margin-top: 2.5rem; }
+      /* Spine: burgundy by day, cream by night (JS places the switch inside the turn) */
+      .tn-on .timeline::before { background: var(--tn-spine, var(--ink)); }
+      /* The heart's disc takes its own row's sky, so no paper blotches show (low specificity so .dy-now can restyle it) */
+      :where(.tn-on) .tl-mid svg { background: var(--tn-bg, var(--paper)); box-shadow: 0 0 0 3px var(--tn-bg, var(--paper)); }
+      /* Rows 3-6: muted italics would fall to ~3.2:1 on the rose, so they take the body ink */
+      .tn-on .timeline li:nth-child(n+3):not(.tn-night) .tl-text .it { color: var(--text); }
+      /* Night ink flips by row, never mid-gradient */
+      .tn-on .timeline .tn-night .tl-text .caps,
+      .tn-on .timeline .tn-night .tl-text .t,
+      .tn-on .timeline .tn-night .tl-icon,
+      .tn-on .timeline .tn-night .tl-mid { color: var(--cream); }
+      .tn-on .timeline .tn-night .tl-text .it { color: rgba(255, 248, 238, 0.82); }
+      .tn-on .timeline .tn-night .tl-mid::before { background: var(--cream); }
+    }
+    @media (forced-colors: active) { .tn-on .tn-sky { display: none; } }
+
+    @keyframes tn-spine { from { scale: 1 0; } to { scale: 1 1; } }
+    @keyframes tn-bloom { 0% { scale: 0.2; } 30% { scale: 1.15; } 45%, 100% { scale: 1; } }
+    @keyframes tn-pen {
+      0%, 10% { stroke-dashoffset: 1.02; fill-opacity: 0; }
+      78% { stroke-dashoffset: 0; fill-opacity: 0; }
+      100% { stroke-dashoffset: 0; fill-opacity: 1; }
+    }
+    @keyframes tn-rise { 0%, 10% { opacity: 0; translate: 0 12px; } 55%, 100% { opacity: 1; translate: 0 0; } }
+    @keyframes tn-twinkle { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.85; } }
+
+    @media screen and (prefers-reduced-motion: no-preference) {
+      /* Gap of 2 (not 1): with 1 1, an offset of 1.02 wraps into the next dash and leaves a 2% tail on every stroke */
+      .tn-pen .timeline .tl-icon svg { stroke-dasharray: 1 2; }
+      .tn-stars i { animation: tn-twinkle 7s ease-in-out infinite paused; animation-delay: var(--tn-d, 0s); }
+      .tn-sky.tn-vis .tn-stars i { animation-play-state: running; }
+
+      @supports (animation-timeline: view()) {
+        .tn-on ol.timeline { view-timeline: --tn-tl block; }
+        .tn-on .timeline::before { transform-origin: 50% 0; animation: tn-spine linear both; animation-timeline: --tn-tl; animation-range: entry 40% exit 60%; }
+        .tn-on .timeline > li { view-timeline: --tn-li block; }
+        /* Individual scale/translate (not transform) and :where() keep these out of dy-'s way */
+        :where(.tn-on .timeline > li) .tl-mid svg { animation: tn-bloom linear both; animation-timeline: --tn-li; animation-range: entry 70% cover 45%; }
+        :where(.tn-on .timeline > li) .tl-text { animation: tn-rise linear both; animation-timeline: --tn-li; animation-range: entry 70% cover 45%; }
+        :where(.tn-pen .timeline > li) .tl-icon svg { animation: tn-pen linear both; animation-timeline: --tn-li; animation-range: entry 70% cover 45%; }
+      }
+      @supports not (animation-timeline: view()) {
+        .tn-io .timeline > li:not(.tn-in) .tl-mid svg { scale: 0.2; }
+        .tn-io .timeline > li:not(.tn-in) .tl-text { opacity: 0; translate: 0 12px; }
+        .tn-io.tn-pen .timeline > li:not(.tn-in) .tl-icon svg { stroke-dashoffset: 1.02; fill-opacity: 0; }
+        :where(.tn-io .timeline > li.tn-in) .tl-mid svg { animation: tn-bloom 1.2s cubic-bezier(.2, .7, .2, 1) both; }
+        :where(.tn-io .timeline > li.tn-in) .tl-text { animation: tn-rise 1.2s cubic-bezier(.2, .7, .2, 1) both; }
+        :where(.tn-io.tn-pen .timeline > li.tn-in) .tl-icon svg { animation: tn-pen 1.2s ease-in-out both; }
+      }
+    }
+  
+
+    /* ---------- El Giro (gr-): Edgar twirls Jasmin as you scroll ---------- */
+    /* #gr-giro replaces the static tree band between #schedule and #details; the JS also removes that node */
+    main > .band { display: none; }
+
+    .gr { position: relative; background: var(--ink-deep); color: var(--cream); padding: clamp(72px, 11vw, 120px) 0; }
+    .js .gr { height: 180vh; height: 180svh; padding: 0; }
+    .gr-stage {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+      padding: 20px 16px; text-align: center;
+      /* a soft burgundy stage light that fades to pure --ink-deep at the edges, so the handoff from #schedule stays seamless */
+      background: radial-gradient(closest-side at 50% 42%, rgba(122, 31, 43, 0.5), rgba(122, 31, 43, 0));
+    }
+    .js .gr-stage {
+      position: -webkit-sticky; position: sticky; top: var(--header);
+      height: calc(100vh - var(--header)); height: calc(100svh - var(--header));
+    }
+
+    .gr-fig { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .gr-frame { position: relative; width: 76vw; max-width: 400px; }
+    .js .gr-frame {
+      width: min(76vw, 400px, max(150px, calc((100vh - var(--header) - 230px) * 0.75)));
+      width: min(76vw, 400px, max(150px, calc((100svh - var(--header) - 230px) * 0.75)));
+    }
+    /* second cream hairline, 6px outside the print, following the arch */
+    .gr-frame::before {
+      content: ""; position: absolute; inset: -7px; pointer-events: none;
+      border: 1px solid rgba(255, 248, 238, 0.45);
+      border-radius: 50% 50% 0 0 / 28.8% 28.8% 0 0;
+    }
+    .gr-print {
+      position: relative; overflow: hidden; isolation: isolate;
+      aspect-ratio: 3 / 4;
+      background: #2A0B10;
+      border: 1px solid rgba(255, 248, 238, 0.85);
+      border-radius: 50% 50% 0 0 / 28% 28% 0 0;
+      box-shadow: 0 36px 60px -30px rgba(0, 0, 0, 0.7);
+    }
+    .gr-print img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+    .gr-print img:first-child { opacity: 1; }
+    .gr-print::after { content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; box-shadow: inset 0 0 50px rgba(26, 8, 10, 0.4); pointer-events: none; }
+    .gr-ease img { transition: opacity 0.3s ease; }
+    @supports not (aspect-ratio: 3 / 4) { .gr-print::before { content: ""; display: block; padding-top: 133.333%; } }
+    .gr-orn { position: absolute; top: -13px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; color: rgba(255, 248, 238, 0.9); }
+
+    .gr-play {
+      display: none; align-items: center; gap: 10px;
+      min-height: 44px; padding: 10px 18px 10px 16px;
+      background: none; border: 1px solid rgba(255, 248, 238, 0.5); color: var(--cream); cursor: pointer;
+      font-family: var(--caps); font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; line-height: 1;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .gr-live .gr-play { display: inline-flex; }
+    .gr-still .gr-play { display: none; }
+    .gr-play svg { width: 14px; height: 14px; flex: none; }
+    .gr-play:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
+    @media (hover: hover) { .gr-play:hover { background: var(--cream); color: var(--ink); border-color: var(--cream); } }
+    .gr-playing .gr-play svg { animation: gr-spin 0.9s cubic-bezier(.45, .05, .3, 1); }
+    @keyframes gr-spin { to { transform: rotate(360deg); } }
+
+    .gr-caption { max-width: 22em; }
+    .gr-caption .gr-cap { color: var(--cream); font-size: clamp(2rem, 8.4vw, 2.7rem); }
+    .gr-caption .hdiv { color: rgba(255, 248, 238, 0.7); margin: 12px 0 10px; }
+    .gr-caption .hdiv::before, .gr-caption .hdiv::after { width: 52px; }
+    .gr-caption .caps-sm { color: rgba(255, 248, 238, 0.75); }
+    .gr-live .gr-caption { opacity: 0; transform: translateY(10px); transition: opacity 0.9s ease, transform 0.9s cubic-bezier(.2, .7, .2, 1); }
+    .gr-live.gr-end .gr-caption { opacity: 1; transform: none; }
+
+    /* Print on the left, caption on the right (desktop, and short landscape phones) */
+    @media (min-width: 900px), (orientation: landscape) and (min-width: 560px) and (max-height: 520px) {
+      .gr-stage { flex-direction: row; gap: clamp(40px, 7vw, 120px); padding: 24px 32px; }
+      .gr-frame { width: 40vw; }
+      .js .gr-frame {
+        width: min(400px, 40vw, max(140px, calc((100vh - var(--header) - 130px) * 0.75)));
+        width: min(400px, 40vw, max(140px, calc((100svh - var(--header) - 130px) * 0.75)));
+      }
+      .gr-caption { width: min(380px, 38vw); }
+      .gr-caption .gr-cap { font-size: clamp(2.3rem, 4vw, 3.6rem); }
+    }
+
+    /* Reduced motion: no pinning, one still print (they face each other), caption shown, no button */
+    @media (prefers-reduced-motion: reduce) {
+      .js .gr { height: auto; padding: clamp(72px, 11vw, 120px) 0; }
+      .js .gr-stage { position: static; height: auto; }
+      .js .gr-frame { width: 76vw; }
+      .gr-play, .gr-live .gr-play { display: none; }
+      .gr-live .gr-caption { opacity: 1; transform: none; transition: none; }
+      .gr-ease img { transition: none; }
+    }
+    @media (prefers-reduced-motion: reduce) and (min-width: 900px), (prefers-reduced-motion: reduce) and (orientation: landscape) and (min-width: 560px) and (max-height: 520px) {
+      .js .gr-frame { width: 40vw; }
+    }
+
+  
+
+    /* ---------- El sello y la pluma (sl-): a wax seal that cracks, names written in ink ---------- */
+    /* The seal is baked wax now (#sl-wax in the sprite); the old CSS disc, its ring and the 'EJ' letters step aside */
+    .seal { background: none; box-shadow: 0 5px 8px -3px rgba(20, 0, 4, 0.55); font-size: 0; color: transparent; }
+    .seal::before { content: none; }
+    .sl-half { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transform-origin: 30% 58%; transition: transform 0.65s cubic-bezier(.5, 0, .9, .6), opacity 0.35s linear 0.3s; }
+    /* Before the crack the first half is the whole seal and the second sits on top of it, so there is no hairline seam */
+    .sl-half + .sl-half { transform-origin: 70% 58%; clip-path: polygon(53% 0, 100% 0, 100% 100%, 48% 100%, 52% 83%, 46% 64%, 55% 43%, 47% 24%); }
+    .env { -webkit-tap-highlight-color: transparent; }
+    .env.sl-press { filter: none; animation-play-state: paused; }
+    .env.sl-press .env-back { box-shadow: 0 30px 40px rgba(0, 0, 0, 0.45); }
+    .env.sl-press .seal { transform: scale(0.94); transition: transform 0.12s ease-out, box-shadow 0.3s ease; }
+    .env.sl-cracked .seal { z-index: 6; box-shadow: 0 5px 8px -3px rgba(20, 0, 4, 0); }
+    .env.sl-cracked .sl-half { opacity: 0; }
+    .env.sl-cracked .sl-half:first-child { clip-path: polygon(0 0, 53% 0, 47% 24%, 55% 43%, 46% 64%, 52% 83%, 48% 100%, 0 100%); transform: translate(-22px, 46px) rotate(-16deg); }
+    .env.sl-cracked .sl-half + .sl-half { transform: translate(22px, 46px) rotate(16deg); }
+    .sl-crumb { position: absolute; width: var(--w); height: var(--w); margin: calc(var(--w) / -2) 0 0 calc(var(--w) / -2); border-radius: 42% 58% 55% 45% / 55% 42% 58% 45%; background: linear-gradient(135deg, #9E3140, #561119); pointer-events: none; animation: sl-crumb 0.75s cubic-bezier(.45, 0, 1, .7) both; }
+    @keyframes sl-crumb { 65% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--r)); } }
+    /* Flap opens at 250ms; the card rises fully clear of the pocket, then lifts toward the viewer */
+    .env.sl-press .env-flap { transform: rotateX(180deg); z-index: 1; transition: transform 0.6s cubic-bezier(.5, 0, .3, 1) 0.25s, z-index 0s 0.52s; }
+    .env.sl-press .env-letter { box-shadow: 0 18px 28px -14px rgba(20, 0, 4, 0.45); animation: sl-letter 1.5s 0.48s both; }
+    @keyframes sl-letter {
+      0% { transform: none; animation-timing-function: cubic-bezier(.2, .7, .2, 1); }
+      53.3% { transform: translateY(-104%); z-index: 2; animation-timing-function: cubic-bezier(.7, 0, .2, 1); }
+      54% { z-index: 7; }
+      100% { transform: translateY(-104%) scale(1.18); z-index: 7; }
+    }
+    .intro.sl-live .intro-top { opacity: 0; transition: opacity 0.5s ease 0.4s; }
+    .intro.sl-live .intro-hint { color: transparent; transition: color 0.3s ease; }
+    .intro.sl-named .intro-hint { animation-delay: 2.6s; }
+    .intro.sl-fade { opacity: 0; transition: opacity 0.6s ease; }
+
+    /* The pen: .sl-write is unwritten ink until .sl-ink (or its parent's .in) writes it left to right */
+    span.sl-write { display: inline-block; }
+    .sl-write {
+      padding: 0.25em 0.5em; margin: -0.25em -0.5em;
+      -webkit-mask-image: linear-gradient(100deg, #000 42%, transparent 58%);
+              mask-image: linear-gradient(100deg, #000 42%, transparent 58%);
+      -webkit-mask-size: 260% 100%; mask-size: 260% 100%;
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-position: 100% 0; mask-position: 100% 0;
+    }
+    .sl-write.sl-ink, .in > .sl-write { animation: sl-pen 1.8s cubic-bezier(.45, .05, .3, 1) forwards; }
+    .sl-write.sl-done { -webkit-mask-image: none; mask-image: none; animation: none; }
+    @keyframes sl-pen {
+      from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+      to { -webkit-mask-position: 0 0; mask-position: 0 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-write, .sl-write.sl-ink, .in > .sl-write { -webkit-mask-image: none; mask-image: none; animation: none; }
+    }
+
+    /* ---------- Finishing: wrapping, focus, selection, legibility ---------- */
+    h2, .faq dt, .field > label { text-wrap: balance; }
+    p, dd { text-wrap: pretty; }
+    :focus-visible { outline: 1px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 5px var(--paper), 0 0 0 6px var(--ink); }
+    input:focus-visible, select:focus-visible, textarea:focus-visible { box-shadow: none; }
+    .env:focus-visible { outline: 1px solid rgba(255, 248, 238, 0.55); outline-offset: 10px; box-shadow: none; }
+    .env.sl-press:focus-visible { outline-color: transparent; }
+    .hero .names:focus { outline: none; box-shadow: none; }
+    ::selection { background: var(--ink); color: var(--cream); }
+    .field > label, .field > legend, .caps-sm, .cd small { font-size: 0.78rem; letter-spacing: 0.18em; }
+    @media (max-width: 420px) { .cd { gap: 4px; } .cd small { letter-spacing: 0.1em; } }
+    @media (max-width: 340px) { .cd small { letter-spacing: 0.04em; } }
+
+  
+
+    /* ---------- Sella tu respuesta (rs-): the reply folds into an envelope and is sealed ---------- */
+    /* Reuses the intro's .env parts, always scoped under .rs-env, so the intro envelope is untouched */
+    .thanks .rs-env, .thanks .rs-receipt { display: none; }
+    .thanks.rs-ready .rs-env, .thanks.rs-ready .rs-receipt { display: block; }
+    .thanks .rs-env { width: 100%; max-width: 320px; margin: 40px auto 0; filter: none; animation: none; cursor: default; }
+    @supports not (aspect-ratio: 1 / 1) { .thanks .rs-env { height: 205px; } }
+    .rs-env .env-back { box-shadow: 0 18px 30px -20px rgba(63, 18, 24, 0.55); }
+    .rs-env .env-letter { justify-content: flex-start; gap: 0; padding: 16px 16px 0; overflow: hidden; transition: transform 1.05s cubic-bezier(.6, 0, .25, 1) 0s; }
+    .rs-env .env-flap { transition: transform 0.75s cubic-bezier(.5, 0, .3, 1) 0.55s, z-index 0s 0.92s; }
+    .rs-env.rs-still .env-letter, .rs-env.rs-still .env-flap { transition: none; }
+    .rs-name { display: block; max-width: 100%; font-family: var(--script); font-size: 1.75rem; line-height: 1.2; color: var(--ink); white-space: nowrap; overflow-wrap: break-word; }
+    .rs-env .env-letter .rs-heart { flex: none; width: 8px; height: 8px; margin: 2px 0 5px; color: var(--ink); opacity: 0.75; }
+    .rs-choice { display: block; font-style: italic; font-size: 1rem; line-height: 1.25; color: var(--text); }
+    .rs-count { display: block; margin-top: 5px; font-family: var(--caps); font-size: 0.56rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ink); }
+    .rs-count:empty { display: none; }
+    .rs-front { position: absolute; left: 6%; right: 6%; bottom: 10%; z-index: 5; text-align: center; line-height: 1.3; }
+    .rs-front .caps-sm { color: var(--ink); font-size: 0.6rem; letter-spacing: 0.24em; }
+    .rs-seal {
+      position: absolute; left: 50%; top: 60%; z-index: 6;
+      width: 64px; height: 64px; margin: -32px 0 0 -32px; overflow: visible;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #B03A48 0%, var(--ink) 52%, #551219 100%);
+      filter: drop-shadow(0 2px 4px rgba(40, 8, 12, 0.45));
+      opacity: 0;
+    }
+    .rs-seal-fb { color: var(--cream); }
+    .rs-seal-wax { color: var(--ink); }
+    .rs-seal.rs-wax { background: none; border-radius: 0; }
+    .rs-seal.rs-wax .rs-seal-fb { display: none; }
+    .rs-seal.rs-pressed { animation: rs-press 0.38s cubic-bezier(.3, 1.6, .5, 1) both; }
+    .rs-seal.rs-set { opacity: 1; }
+    @keyframes rs-press {
+      from { opacity: 0; transform: scale(1.6); filter: drop-shadow(0 12px 18px rgba(40, 8, 12, 0.22)); }
+      to { opacity: 1; transform: scale(1); filter: drop-shadow(0 2px 4px rgba(40, 8, 12, 0.45)); }
+    }
+    .thanks .rs-receipt { max-width: 100%; margin: 22px auto 30px; color: var(--ink); line-height: 1.9; overflow-wrap: break-word; text-wrap: balance; }
+    .thanks .rs-hold { transition: opacity 0.7s ease 0.12s, transform 0.8s cubic-bezier(.2, .7, .2, 1) 0.12s; }
+    .thanks .rs-receipt.rs-hold { transition-delay: 0s; }
+    .thanks.rs-play .rs-hold { opacity: 0; transform: translateY(8px); }
+    .thanks .rs-head:focus { outline: none; }
+    #rsvp-form.rs-fade { opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+    .submit.rs-sending { position: relative; }
+    .submit.rs-sending::after {
+      content: ""; position: absolute; left: 22%; right: 22%; bottom: 11px; height: 1px;
+      background: var(--cream); opacity: 0.85; pointer-events: none;
+      transform: scaleX(0); transform-origin: left center;
+      animation: rs-hair 3s ease-out forwards;
+    }
+    @keyframes rs-hair { to { transform: scaleX(0.9); } }
+    @media (max-width: 359px) {
+      .thanks .rs-env { margin-top: 30px; }
+      .rs-seal { width: 52px; height: 52px; margin: -26px 0 0 -26px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .rs-env .env-letter, .rs-env .env-flap, #rsvp-form.rs-fade, .thanks .rs-hold { transition: none; }
+      .rs-seal.rs-pressed { animation: none; opacity: 1; }
+      .submit.rs-sending::after { animation: none; transform: scaleX(0.9); }
+    }
+
+  
+    /* ---------- El Pase (ps-): reserved seats, a remembered reply, the keepsake, WhatsApp ---------- */
+    .ps-env-seats { margin-top: -18px; text-align: center; font-size: 0.74rem; letter-spacing: 0.28em; color: rgba(255, 248, 238, 0.85); transition: opacity 0.35s; }
+    .env.open ~ .ps-env-seats { opacity: 0; }
+    .rsvp-intro.ps-seats { color: var(--ink); font-size: 1.12rem; }
+    .ps-memo { max-width: 640px; margin: -18px auto 32px; padding: 14px 18px 12px; text-align: center; background: var(--cream); border: 1px solid var(--line); }
+    .ps-memo-main { font-style: italic; color: var(--ink); font-size: 1.1rem; line-height: 1.5; }
+    .ps-memo-sub { font-style: italic; color: var(--muted); font-size: 1rem; line-height: 1.4; margin-top: 2px; }
+    .ps-link { display: inline-flex; align-items: center; min-height: 52px; padding: 0 6px; vertical-align: middle; border: 0; background: none; cursor: pointer; font-family: var(--caps); font-style: normal; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink); text-decoration: underline; text-decoration-color: rgba(122, 31, 43, 0.45); text-underline-offset: 5px; }
+    .ps-link:hover { text-decoration-color: var(--ink); }
+    .ps-keep { max-width: 600px; margin: clamp(32px, 6vw, 44px) auto 0; text-align: center; }
+    .ps-keep-lead { color: var(--text); font-size: 1.08rem; line-height: 1.4; max-width: 32ch; margin: 0 auto 16px; }
+    .ps-actions { display: grid; gap: 12px; }
+    @media (min-width: 560px) { .ps-actions { grid-template-columns: 1fr 1fr; } }
+    .ps-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; min-height: 52px; padding: 12px 18px;
+      border: 1px solid var(--ink); border-radius: 0; background: transparent; color: var(--ink);
+      font-family: var(--caps); font-size: 0.74rem; letter-spacing: 0.18em; line-height: 1.3; text-transform: uppercase;
+      text-decoration: none; text-align: center; cursor: pointer;
+      transition: background 0.3s, color 0.3s, border-color 0.3s; -webkit-tap-highlight-color: transparent;
+    }
+    .ps-btn:hover { background: var(--ink); color: var(--cream); }
+    .ps-btn-ink { background: var(--ink); color: var(--cream); }
+    .ps-btn-ink:hover { background: var(--ink-deep); border-color: var(--ink-deep); }
+    .ps-btn:focus-visible, .ps-link:focus-visible, .ps-sheet-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    .ps-btn[aria-busy="true"], .ps-link[aria-busy="true"] { opacity: 0.6; cursor: progress; }
+    .ps-ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .ps-status { color: var(--text); font-style: italic; font-size: 1rem; line-height: 1.4; text-align: center; }
+    .ps-status:not(:empty) { margin-top: 10px; }
+    .ps-thanks { max-width: 420px; margin: 18px auto 0; }
+    .ps-thanks .ps-btn + .ps-btn { margin-top: 12px; }
+    .ps-env-seats[hidden], .ps-seats[hidden], .ps-memo[hidden], .ps-thanks[hidden], .ps-btn[hidden], #ps-memo-more[hidden] { display: none !important; }
+
+    /* Keepsake preview: shown only when the phone cannot hand the image straight to its share sheet */
+    .ps-sheet {
+      width: min(92vw, 440px); max-width: none;
+      max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px);
+      margin: auto; padding: 0;
+      border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -7px;
+      background: var(--paper); color: var(--text);
+      overflow: auto; overscroll-behavior: contain;
+    }
+    .ps-sheet::backdrop { background: rgba(26, 8, 10, 0.82); }
+    .ps-sheet-in { position: relative; padding: 18px 18px 20px; text-align: center; }
+    .ps-sheet-close { position: absolute; top: 6px; right: 6px; min-width: 52px; min-height: 52px; padding: 0 10px; border: 0; background: none; cursor: pointer; font-family: var(--caps); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink); }
+    .ps-sheet-title { font-family: var(--script); color: var(--ink); font-size: 2.1rem; line-height: 1.1; margin: 10px 60px 12px; }
+    .ps-sheet-img { width: auto; height: auto; max-width: 100%; max-height: 56vh; max-height: 56dvh; margin: 0 auto 12px; object-fit: contain; box-shadow: 0 18px 36px -22px rgba(63, 18, 24, 0.55); -webkit-touch-callout: default; }
+    .ps-sheet-hint { font-style: italic; color: var(--ink); font-size: 1.1rem; line-height: 1.4; margin-bottom: 14px; }
+    .ps-sheet-actions { display: grid; gap: 10px; }
+
+  
+
+    /* ---------- Hoy (dy-): calendar chooser, church-to-reception route, day-of card ---------- */
+    .dy-sr { position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+
+    /* Route link under the reception's Directions (always visible) */
+    .dy-route { display: table; margin: 16px auto 0; }
+
+    /* Day-of card, shown from November 14 */
+    .dy-today { background: var(--paper-2); border-bottom: 1px solid var(--line); padding: 28px 16px 34px; scroll-margin-top: var(--header); }
+    .dy-today[hidden] { display: none; }
+    .dy-card {
+      position: relative; max-width: 560px; margin: 0 auto;
+      background: var(--paper);
+      border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -7px;
+      padding: 30px clamp(20px, 6vw, 44px) 32px;
+      text-align: center;
+      box-shadow: 0 24px 48px -30px rgba(63, 18, 24, 0.35);
+    }
+    .dy-mono { display: block; width: 58px; height: 53px; margin: 0 auto 8px; color: var(--ink); }
+    .dy-kicker { font-family: var(--caps); font-weight: 400; font-size: 0.66rem; letter-spacing: 0.26em; line-height: 1.6; text-transform: uppercase; color: var(--ink); }
+    .dy-head { font-size: clamp(2.2rem, 9vw, 2.9rem); margin-top: 10px; }
+    .dy-num { font-family: var(--caps); font-size: 0.5em; letter-spacing: 0.06em; white-space: nowrap; vertical-align: 0.14em; }
+    .dy-sub { max-width: 36ch; margin: 10px auto 0; font-style: italic; font-size: 1.08rem; line-height: 1.45; color: var(--text); }
+    .dy-sub + .dy-sub { margin-top: 4px; }
+    .dy-t { font-family: var(--caps); font-style: normal; font-size: 0.86em; letter-spacing: 0.04em; color: var(--ink); white-space: nowrap; }
+    .dy-pair { display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); gap: 0 clamp(12px, 4vw, 28px); margin-top: 22px; }
+    .dy-pair.dy-one { grid-template-columns: minmax(0, 1fr); }
+    .dy-rule { background: var(--ink); opacity: 0.45; }
+    .dy-lbl { font-family: var(--caps); font-size: 0.66rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--ink); }
+    .dy-ico { display: block; width: 42px; height: 42px; margin: 8px auto 6px; color: var(--ink); }
+    .dy-name { font-family: var(--caps); font-size: clamp(0.78rem, 2.9vw, 0.95rem); letter-spacing: 0.14em; line-height: 1.35; text-transform: uppercase; color: var(--ink); }
+    .dy-time { margin-top: 4px; font-family: var(--caps); font-size: clamp(0.95rem, 3.4vw, 1.1rem); letter-spacing: 0.04em; color: var(--text); }
+    .dy-place { margin-top: 4px; font-style: italic; font-size: 0.98rem; line-height: 1.3; color: var(--text); }
+    .dy-rel { margin-top: 2px; font-style: italic; font-size: 1.02rem; color: var(--ink); }
+    .dy-go { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 320px; min-height: 52px; margin: 26px auto 0; padding: 14px 24px; font-size: 0.74rem; }
+    .dy-addr { margin-top: 10px; font-style: italic; font-size: 0.98rem; line-height: 1.45; color: var(--text); }
+    .dy-addr b { font-family: var(--caps); font-weight: 400; font-style: normal; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); }
+    .dy-card .text-link { display: table; margin: 18px auto 0; }
+    .dy-go:focus-visible, .dy-card .text-link:focus-visible, .dy-route:focus-visible, .dy-cal a:focus-visible, .dy-cal button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+    @media (max-width: 360px) { .dy-name { letter-spacing: 0.08em; } .dy-lbl { letter-spacing: 0.2em; } }
+
+    /* Current row in the Order of Events */
+    .timeline li.dy-now .tl-mid svg { transform: scale(1.2); }
+    .dy-ring { position: absolute; left: 50%; top: 50%; width: 23px; height: 23px; margin: -11.5px 0 0 -11.5px; border-radius: 50%; box-shadow: 0 0 0 6px rgba(122, 31, 43, 0.18); pointer-events: none; animation: dy-pulse 2.4s ease-in-out infinite; }
+    .tn-night .dy-ring { box-shadow: 0 0 0 6px rgba(255, 248, 238, 0.3); }
+    @keyframes dy-pulse { 50% { transform: scale(1.2); opacity: 0.45; } }
+
+    /* Calendar chooser (every device except Apple, which gets one .ics with both events) */
+    .dy-cal:not([open]) { display: none; }
+    .dy-cal {
+      width: min(calc(100% - 32px), 440px); max-width: none; max-height: calc(100% - 32px);
+      padding: 0; border: 0; background: transparent; color: var(--text);
+      overflow: auto; overscroll-behavior: contain;
+      box-shadow: 0 30px 60px -24px rgba(26, 8, 10, 0.55);
+    }
+    .dy-cal::backdrop { background: rgba(26, 8, 10, 0.6); }
+    .dy-cal-card {
+      background: var(--paper);
+      border: 1px solid var(--line); outline: 1px solid rgba(122, 31, 43, 0.1); outline-offset: -7px;
+      padding: clamp(30px, 7vw, 44px) clamp(20px, 6vw, 36px) clamp(16px, 4vw, 24px);
+      text-align: center;
+    }
+    .dy-cal-title { font-size: clamp(1.05rem, 4.4vw, 1.3rem); line-height: 1.35; margin-top: 16px; }
+    .dy-cal-sub { font-size: 1.05rem; line-height: 1.4; margin: 4px 0 20px; }
+    .dy-cal-add {
+      display: flex; align-items: center; gap: 14px; min-height: 52px; margin-top: 12px; padding: 12px 16px;
+      text-align: left; text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--ink);
+      transition: background 0.3s, color 0.3s;
+    }
+    .dy-cal-add:hover { background: var(--ink); color: var(--cream); }
+    .dy-cal-add > svg { flex: none; width: 34px; height: 34px; }
+    .dy-cal-add > span { flex: 1; min-width: 0; }
+    .dy-cal-add b { display: block; font-family: var(--caps); font-weight: 400; font-size: 0.72rem; letter-spacing: 0.2em; line-height: 1.5; text-transform: uppercase; }
+    .dy-cal-add small { display: block; margin-top: 2px; font-size: 0.95rem; font-style: italic; line-height: 1.3; color: var(--text); }
+    .dy-cal-add:hover small, .dy-cal-add:hover .dy-t { color: inherit; }
+    .dy-cal-add .dy-cal-ok { width: 14px; height: 14px; opacity: 0; transition: opacity 0.3s; }
+    .dy-cal-add.dy-done .dy-cal-ok { opacity: 1; }
+    .dy-cal-close {
+      display: block; width: 100%; min-height: 52px; margin-top: 16px;
+      background: none; border: 0; border-top: 1px solid var(--line); cursor: pointer;
+      font-family: var(--caps); font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text);
+    }
+    .dy-cal-close:hover { color: var(--ink); }
+    .dy-cal[open] { animation: dy-in 0.35s cubic-bezier(.2, .7, .2, 1); }
+    @keyframes dy-in { from { opacity: 0; transform: translateY(12px); } }
+    /* Only for browsers without <dialog> support */
+    .dy-cal.dy-cal-nomodal { position: fixed; left: 0; right: 0; top: 50%; z-index: 120; margin: 0 auto; transform: translateY(-50%); animation: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dy-ring, .dy-cal[open] { animation: none; }
+      .dy-cal-add, .dy-cal-add .dy-cal-ok { transition: none; }
+    }
+
   </style>
 </head>
 <body>
@@ -519,6 +947,8 @@
 <symbol id="i-firstdance" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 34V11c3 2 8 3.5 8 9"/></g><g fill="currentColor"><ellipse cx="20.5" cy="34.5" rx="4.2" ry="3.2" transform="rotate(-20 20.5 34.5)"/><path d="M11.00 19.80c-0.53 -0.79 -3.50 -2.27 -3.50 -4.64a1.84 1.84 0 0 1 3.50 -0.96a1.84 1.84 0 0 1 3.50 0.96c0 2.36 -2.98 3.85 -3.50 4.64z"/><path d="M37.00 14.40c-0.45 -0.68 -3.00 -1.95 -3.00 -3.97a1.58 1.58 0 0 1 3.00 -0.83a1.58 1.58 0 0 1 3.00 0.83c0 2.03 -2.55 3.30 -3.00 3.97z"/></g></symbol>
 <symbol id="i-music" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 36V15l16-4v21"/><path d="M18 15l16-4" stroke-width="4"/></g><g fill="currentColor"><ellipse cx="14.5" cy="36.5" rx="4.2" ry="3.2" transform="rotate(-20 14.5 36.5)"/><ellipse cx="30.5" cy="32.5" rx="4.2" ry="3.2" transform="rotate(-20 30.5 32.5)"/></g></symbol>
 <symbol id="i-end" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 41c-3-4-14-9-14-17.5a7 7 0 0 1 14-3 7 7 0 0 1 14 3C38 32 27 37 24 41z"/></g><g fill="currentColor"><path d="M24.00 30.20c-0.60 -0.90 -4.00 -2.60 -4.00 -5.30a2.10 2.10 0 0 1 4.00 -1.10a2.10 2.10 0 0 1 4.00 1.10c0 2.70 -3.40 4.40 -4.00 5.30z"/><path d="M37.00 11.00c-0.38 -0.56 -2.50 -1.62 -2.50 -3.31a1.31 1.31 0 0 1 2.50 -0.69a1.31 1.31 0 0 1 2.50 0.69c0 1.69 -2.12 2.75 -2.50 3.31z"/><path d="M42.00 16.40c-0.26 -0.39 -1.75 -1.14 -1.75 -2.32a0.92 0.92 0 0 1 1.75 -0.48a0.92 0.92 0 0 1 1.75 0.48c0 1.18 -1.49 1.93 -1.75 2.32z"/></g></symbol>
+<defs><radialGradient id="sl-wax-g" gradientUnits="userSpaceOnUse" cx="40" cy="40" r="44" fx="24" fy="20"><stop offset="0" stop-color="#B03A48"/><stop offset=".5" stop-color="#7A1F2B"/><stop offset="1" stop-color="#4E1017"/></radialGradient><linearGradient id="sl-wax-in" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E151E"/><stop offset="1" stop-color="#8C2835"/></linearGradient></defs>
+<symbol id="sl-wax" viewBox="0 0 80 80"><g fill="url(#sl-wax-g)"><path d="M75.5 37.8Q76.9 40.0 77.2 42.5Q77.5 44.9 76.6 47.3Q75.7 49.6 74.8 51.8Q74.0 54.1 73.2 56.4Q72.4 58.7 70.8 60.6Q69.2 62.4 66.8 63.4Q64.4 64.4 62.3 65.3Q60.2 66.3 58.7 68.0Q57.2 69.8 55.6 71.7Q53.9 73.6 51.7 74.6Q49.5 75.5 47.1 75.8Q44.8 76.1 42.4 76.7Q40.0 77.2 37.5 77.6Q35.0 77.9 32.7 77.0Q30.4 76.0 28.5 74.0Q26.7 72.0 25.0 70.5Q23.3 69.0 21.1 68.2Q18.9 67.4 16.8 66.4Q14.7 65.3 13.2 63.5Q11.7 61.7 10.3 59.8Q9.0 57.9 7.2 56.1Q5.4 54.3 4.0 52.2Q2.5 50.0 2.6 47.5Q2.8 44.9 3.8 42.5Q4.9 40.0 5.5 37.8Q6.1 35.5 6.1 33.2Q6.2 30.9 6.8 28.7Q7.4 26.5 8.7 24.6Q10.0 22.7 11.1 20.6Q12.1 18.6 12.8 16.0Q13.5 13.5 14.9 11.3Q16.3 9.2 18.8 8.3Q21.2 7.4 23.8 7.3Q26.4 7.1 28.6 6.6Q30.9 6.0 33.1 5.4Q35.4 4.7 37.7 5.0Q40.0 5.2 42.2 5.9Q44.4 6.6 46.7 6.5Q49.0 6.5 51.6 6.0Q54.3 5.5 56.8 6.1Q59.3 6.6 61.0 8.5Q62.8 10.3 64.2 12.4Q65.6 14.4 67.2 16.1Q68.8 17.9 70.1 19.9Q71.3 21.9 71.6 24.3Q71.9 26.8 72.0 29.1Q72.1 31.4 73.1 33.5Q74.1 35.5 75.5 37.8Z"/><ellipse cx="22.9" cy="69.6" rx="2.4" ry="3" transform="rotate(30 22.9 69.6)"/><ellipse cx="59.9" cy="67.3" rx="2" ry="2.6" transform="rotate(-36 59.9 67.3)"/></g><g fill="none" stroke-linecap="round"><path d="M9.3 48.2A31.8 31.8 0 0 1 48.2 9.3" stroke="rgba(255,226,216,.3)"/><path d="M70.9 31.7A32 32 0 0 1 31.7 70.9" stroke="rgba(30,0,5,.4)" stroke-width="1.2"/></g><circle cx="40" cy="40" r="28.6" fill="url(#sl-wax-in)" stroke="rgba(30,0,5,.3)" stroke-width=".8"/><g fill="none" stroke-linecap="round"><path d="M13.1 47.2A27.9 27.9 0 0 1 47.2 13.1" stroke="rgba(30,0,5,.35)" stroke-width="1.4"/><path d="M67 32.8A27.9 27.9 0 0 1 32.8 67" stroke="rgba(255,220,210,.2)"/></g><use href="#mono" x="9.4" y="8.4" width="60" height="55" color="rgba(30,0,5,.5)"/><use href="#mono" x="10.6" y="9.6" width="60" height="55" color="rgba(255,220,210,.3)"/><use href="#mono" x="10" y="9" width="60" height="55" color="#6A1924"/><ellipse cx="15.3" cy="15.3" rx="5" ry="1.6" transform="rotate(-45 15.3 15.3)" fill="rgba(255,236,228,.18)"/></symbol>
 <symbol id="heart" viewBox="0 0 10 10"><path fill="currentColor" d="M5 9.2C4.4 8.3 1 6.6 1 3.9A2.1 2.1 0 0 1 5 2.8 2.1 2.1 0 0 1 9 3.9C9 6.6 5.6 8.3 5 9.2z"/></symbol>
 <symbol id="vine" viewBox="0 0 200 24"><g fill="currentColor"><path d="M4 12H196" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M4 12l5-4M4 12l5 4M196 12l-5-4M196 12l-5 4" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><ellipse cx="81.8" cy="8.6" rx="4.6" ry="1.9" transform="rotate(-35.0 81.8 8.6)"/><ellipse cx="81.8" cy="15.4" rx="4.6" ry="1.9" transform="rotate(35.0 81.8 15.4)"/><ellipse cx="67.8" cy="8.6" rx="4.6" ry="1.9" transform="rotate(-35.0 67.8 8.6)"/><ellipse cx="67.8" cy="15.4" rx="4.6" ry="1.9" transform="rotate(35.0 67.8 15.4)"/><ellipse cx="53.8" cy="8.6" rx="4.6" ry="1.9" transform="rotate(-35.0 53.8 8.6)"/><ellipse cx="53.8" cy="15.4" rx="4.6" ry="1.9" transform="rotate(35.0 53.8 15.4)"/><ellipse cx="39.8" cy="8.6" rx="4.6" ry="1.9" transform="rotate(-35.0 39.8 8.6)"/><ellipse cx="39.8" cy="15.4" rx="4.6" ry="1.9" transform="rotate(35.0 39.8 15.4)"/><ellipse cx="25.8" cy="8.6" rx="4.6" ry="1.9" transform="rotate(-35.0 25.8 8.6)"/><ellipse cx="25.8" cy="15.4" rx="4.6" ry="1.9" transform="rotate(35.0 25.8 15.4)"/><ellipse cx="118.2" cy="8.6" rx="4.6" ry="1.9" transform="rotate(35.0 118.2 8.6)"/><ellipse cx="118.2" cy="15.4" rx="4.6" ry="1.9" transform="rotate(-35.0 118.2 15.4)"/><ellipse cx="132.2" cy="8.6" rx="4.6" ry="1.9" transform="rotate(35.0 132.2 8.6)"/><ellipse cx="132.2" cy="15.4" rx="4.6" ry="1.9" transform="rotate(-35.0 132.2 15.4)"/><ellipse cx="146.2" cy="8.6" rx="4.6" ry="1.9" transform="rotate(35.0 146.2 8.6)"/><ellipse cx="146.2" cy="15.4" rx="4.6" ry="1.9" transform="rotate(-35.0 146.2 15.4)"/><ellipse cx="160.2" cy="8.6" rx="4.6" ry="1.9" transform="rotate(35.0 160.2 8.6)"/><ellipse cx="160.2" cy="15.4" rx="4.6" ry="1.9" transform="rotate(-35.0 160.2 15.4)"/><ellipse cx="174.2" cy="8.6" rx="4.6" ry="1.9" transform="rotate(35.0 174.2 8.6)"/><ellipse cx="174.2" cy="15.4" rx="4.6" ry="1.9" transform="rotate(-35.0 174.2 15.4)"/><path d="M100.00 16.40c-0.82 -1.24 -5.50 -3.58 -5.50 -7.29a2.89 2.89 0 0 1 5.50 -1.51a2.89 2.89 0 0 1 5.50 1.51c0 3.71 -4.67 6.05 -5.50 7.29z"/></g></symbol>
 <symbol id="mono" viewBox="0 0 120 110"><g fill="currentColor"><path d="M53.1 95.4 L50.9 95.0 L48.8 94.4 L46.8 93.8 L44.8 93.0 L42.8 92.1 L40.9 91.1 L39.0 90.0 L37.2 88.8 L35.4 87.6 L33.8 86.2 L32.2 84.7 L30.7 83.2 L29.2 81.6 L27.9 79.8 L26.6 78.1 L25.5 76.2 L24.5 74.3 L23.5 72.4 L22.7 70.4 L22.0 68.4 L21.3 66.3 L20.8 64.2 L20.5 62.1 L20.2 59.9 L20.0 57.7 L20.0 55.6 L20.1 53.4 L20.3 51.3 L20.6 49.1 L21.0 47.0 L21.6 44.9 L22.2 42.8 L23.0 40.8 L23.9 38.8 L24.8 36.9 L25.9 35.0 L27.1 33.2 L28.4 31.5 L29.8 29.8 L31.2 28.2" fill="none" stroke="currentColor" stroke-width="1.3"/>
@@ -565,9 +995,10 @@
       <span class="env-letter"><svg aria-hidden="true"><use href="#mono"/></svg><span class="caps-sm">14 · XI · 2026</span></span>
       <span class="env-pocket"></span>
       <span class="env-flap"></span>
-      <span class="seal" aria-hidden="true">EJ</span>
+      <span class="seal" aria-hidden="true"><svg class="sl-half"><use href="#sl-wax"/></svg><svg class="sl-half"><use href="#sl-wax"/></svg>EJ</span>
       <span class="env-to" id="env-to"></span>
     </button>
+    <p class="caps-sm ps-env-seats" id="ps-env-seats" hidden></p>
     <p class="intro-hint" data-es="Toca para abrir">Tap to open</p>
   </div>
 
@@ -591,6 +1022,10 @@
     </div>
     <span class="progress" id="progress" aria-hidden="true"></span>
   </header>
+
+  <aside id="dy-hoy" class="dy-today" hidden aria-labelledby="dy-kicker">
+    <div class="dy-card" id="dy-card"></div>
+  </aside>
 
   <main id="top">
 
@@ -664,6 +1099,14 @@
           </div>
           <svg class="vine" aria-hidden="true"><use href="#vine"/></svg>
         </div>
+        <div class="ps-keep reveal" id="ps-keep">
+          <p class="it ps-keep-lead" data-es="Guarda la invitación en tus fotos o compártela con tu familia.">Save the invitation to your photos or share it with your family.</p>
+          <div class="ps-actions">
+            <button type="button" class="ps-btn ps-btn-ink" id="ps-save"><svg class="ps-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11.5M7 10.5l5 5 5-5M4.5 19.5h15"/></svg><span data-es="Guardar en mi teléfono">Save to my phone</span></button>
+            <a class="ps-btn ps-wa" id="ps-wa" href="https://wa.me/" target="_blank" rel="noopener"><svg class="ps-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8a8.2 8.2 0 0 0-7.1 12.3L3.8 20.2l4.2-1.1A8.2 8.2 0 1 0 12 3.8z"/></svg><span data-es="Enviar por WhatsApp">Send on WhatsApp</span></a>
+          </div>
+          <div class="ps-status" id="ps-status" role="status"></div>
+        </div>
       </div>
     </section>
 
@@ -705,6 +1148,7 @@
             <h3>Rancho Rio Grande<br>Zacatecas</h3>
             <address>5419 Schurmier Road<br>Houston, Texas 77048</address>
             <a class="text-link" href="https://maps.google.com/?q=5419+Schurmier+Rd+Houston+TX+77048" target="_blank" rel="noopener" data-es="Cómo llegar">Directions</a>
+            <a class="text-link dy-route" href="https://www.google.com/maps/dir/?api=1&amp;origin=9900%20Stella%20Link%20Rd%20Houston%20TX%2077025&amp;destination=5419%20Schurmier%20Rd%20Houston%20TX%2077048&amp;travelmode=driving" target="_blank" rel="noopener" data-es="De la iglesia a la recepción">From the church to the reception</a>
           </div>
         </div>
 
@@ -716,10 +1160,12 @@
 
     <!-- Order of events -->
     <section class="section order" id="schedule">
+      <div class="tn-sky" aria-hidden="true"><div class="tn-stars"><i style="left:4%;top:9%;--tn-d:0s"></i><i style="left:95%;top:19%;--tn-d:-2.625s"></i><i style="left:9%;top:41%;--tn-d:-5.25s"></i><i style="left:91%;top:54%;--tn-d:-1.75s"></i><i style="left:23%;top:77%;--tn-d:-4.375s"></i><i style="left:42%;top:91%;--tn-d:-0.875s"></i><i style="left:64%;top:81%;--tn-d:-3.5s"></i><i style="left:82%;top:94%;--tn-d:-6.125s"></i></div></div>
       <div class="wrap">
         <div class="heading reveal">
           <h2 class="caps" data-es="Orden de Eventos">Order of Events</h2>
           <p class="it" data-es="Order of Events">Orden de Eventos</p>
+          <p class="caps-sm tn-sub" data-es="Del mediodía a la madrugada">From noon to the small hours</p>
         </div>
         <ol class="timeline">
           <li class="reveal"><span class="tl-icon"><svg><use href="#i-church"/></svg></span><span class="tl-mid"><svg><use href="#heart"/></svg></span><div class="tl-text"><p class="caps" data-es="Misa">Ceremony</p><p class="it" data-es="Ceremony">Misa</p><p class="t">12:00 PM</p></div></li>
@@ -731,6 +1177,33 @@
           <li class="reveal"><span class="tl-icon"><svg><use href="#i-music"/></svg></span><span class="tl-mid"><svg><use href="#heart"/></svg></span><div class="tl-text"><p class="caps" data-es="Baile">Dancing</p><p class="it" data-es="Dancing">Baile</p><p class="t">9:00 PM</p></div></li>
           <li class="reveal"><span class="tl-icon"><svg><use href="#i-end"/></svg></span><span class="tl-mid"><svg><use href="#heart"/></svg></span><div class="tl-text"><p class="caps" data-es="Fin">The End</p><p class="it" data-es="The End">Fin</p><p class="t">1:00 AM</p></div></li>
         </ol>
+      </div>
+    </section>
+
+    <!-- El Giro: Edgar twirls Jasmin as you scroll (replaces the static tree band below, which CSS hides and JS removes) -->
+    <section class="gr" id="gr-giro">
+      <div class="gr-stage">
+        <div class="gr-fig">
+          <div class="gr-frame">
+            <div class="gr-print" role="img" aria-label="Edgar twirls Jasmin on the lawn" data-es-label="Edgar gira a Jasmin sobre el pasto">
+              <img src="giro-1.jpg" width="720" height="960" alt="" loading="lazy" decoding="async" />
+              <img data-src="giro-2.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-3.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-4.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-5.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-6.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-7.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-8.jpg" width="720" height="960" alt="" decoding="async" />
+              <img data-src="giro-9.jpg" width="720" height="960" alt="" decoding="async" />
+            </div>
+            <svg class="gr-orn" aria-hidden="true"><use href="#heart"/></svg>
+          </div>
+        </div>
+        <div class="gr-caption">
+          <p class="script gr-cap" data-es="Nos vemos en la pista">See you on the dance floor</p>
+          <div class="hdiv" aria-hidden="true"><svg><use href="#heart"/></svg></div>
+          <p class="caps-sm" data-es="Primer Baile · 8:00 PM">First Dance · 8:00 PM</p>
+        </div>
       </div>
     </section>
 
@@ -822,6 +1295,12 @@
         </div>
         <p class="rsvp-intro reveal" data-es="Por favor envía una respuesta por invitación, incluyendo a todos en tu grupo.">Please send one response per invitation, including everyone in your party.</p>
         <p class="caps-sm rsvp-deadline reveal" data-es="Por favor confirma antes del 7 de noviembre">Kindly respond by November 7</p>
+        <p class="rsvp-intro ps-seats reveal" id="ps-seats" hidden></p>
+        <div class="ps-memo reveal" id="ps-memo" hidden>
+          <p class="ps-memo-main"><span id="ps-memo-text"></span><span id="ps-memo-more" hidden> · <button type="button" class="ps-link" id="ps-memo-view">View your pass</button></span></p>
+          <p class="ps-memo-sub" id="ps-memo-sub"></p>
+          <div class="ps-status" id="ps-memo-status" role="status"></div>
+        </div>
 
         <div class="rsvp-card reveal">
           <form id="rsvp-form" novalidate>
@@ -866,10 +1345,27 @@
           </form>
 
           <div class="thanks" id="thanks" hidden>
+            <div class="env rs-env open" aria-hidden="true">
+              <span class="env-back"></span>
+              <span class="env-letter"><span class="rs-name"></span><svg class="rs-heart" aria-hidden="true"><use href="#heart"/></svg><span class="rs-choice"></span><span class="rs-count"></span></span>
+              <span class="env-pocket"></span>
+              <span class="env-flap"></span>
+              <span class="rs-front"><span class="caps-sm" data-es="Para Jasmin y Edgar">To Jasmin &amp; Edgar</span></span>
+              <svg class="rs-seal" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                <g class="rs-seal-fb"><circle cx="50" cy="50" r="41" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.2"/><use href="#mono" x="18" y="21" width="64" height="58.7"/></g>
+                <use class="rs-seal-wax" href="#sl-wax" width="100" height="100"/>
+              </svg>
+            </div>
+            <p class="caps-sm rs-receipt rs-hold" id="rs-receipt"></p>
             <div class="hdiv" aria-hidden="true"><svg><use href="#heart"/></svg></div>
             <p class="caps" data-es="Gracias">Thank you</p>
             <p id="thanks-text"></p>
             <button class="btn btn-ink" type="button" id="thanks-cal" data-es="Agregar al calendario" hidden>Add to calendar</button>
+            <div class="ps-thanks" id="ps-thanks" hidden>
+              <button type="button" class="ps-btn ps-btn-ink" id="ps-thanks-save"><svg class="ps-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11.5M7 10.5l5 5 5-5M4.5 19.5h15"/></svg><span data-es="Guardar mi pase">Save my pass</span></button>
+              <a class="ps-btn ps-wa" id="ps-thanks-wa" href="https://wa.me/" target="_blank" rel="noopener"><svg class="ps-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.8a8.2 8.2 0 0 0-7.1 12.3L3.8 20.2l4.2-1.1A8.2 8.2 0 1 0 12 3.8z"/></svg><span data-es="Enviar por WhatsApp">Send on WhatsApp</span></a>
+              <div class="ps-status" id="ps-thanks-status" role="status"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -885,6 +1381,25 @@
     <p class="small"><a href="/save-the-date" data-es="Ver nuestro Save the Date">See our Save the Date</a></p>
     <p class="small"><span data-es="Fotografía por">Photography by</span> <a href="https://www.instagram.com/pharaohjenkins/" target="_blank" rel="noopener">@pharaohjenkins</a></p>
   </footer>
+
+  <dialog class="dy-cal" id="dy-cal" aria-labelledby="dy-cal-title">
+    <div class="dy-cal-card">
+      <div class="hdiv" aria-hidden="true"><svg><use href="#heart"/></svg></div>
+      <h2 class="caps dy-cal-title" id="dy-cal-title" data-es="Agregar al calendario">Add to calendar</h2>
+      <p class="it dy-cal-sub" data-es="Dos eventos, cada uno con su dirección">Two events, each with its own address</p>
+      <a class="dy-cal-add" id="dy-cal-misa" href="https://calendar.google.com/calendar/render?action=TEMPLATE" target="_blank" rel="noopener">
+        <svg aria-hidden="true" focusable="false"><use href="#i-church"/></svg>
+        <span><b data-es="Agregar la Misa">Add the Ceremony</b><small><span class="dy-t">12:00 PM</span> · Corpus Christi Catholic Church</small></span>
+        <svg class="dy-cal-ok" aria-hidden="true" focusable="false"><use href="#heart"/></svg>
+      </a>
+      <a class="dy-cal-add" id="dy-cal-recepcion" href="https://calendar.google.com/calendar/render?action=TEMPLATE" target="_blank" rel="noopener">
+        <svg aria-hidden="true" focusable="false"><use href="#i-rings"/></svg>
+        <span><b data-es="Agregar la Recepción">Add the Reception</b><small><span class="dy-t">5:30 PM</span> · Rancho Rio Grande Zacatecas</small></span>
+        <svg class="dy-cal-ok" aria-hidden="true" focusable="false"><use href="#heart"/></svg>
+      </a>
+      <button class="dy-cal-close" id="dy-cal-close" type="button" data-es="Cerrar">Close</button>
+    </div>
+  </dialog>
 
   <dialog class="lightbox" id="lightbox">
     <button class="lightbox-close" type="button" data-es="Cerrar">Close</button>
@@ -914,6 +1429,7 @@
       document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
       document.getElementById("lang-field").value = lang;
       renderCountdown();
+      document.dispatchEvent(new CustomEvent('langchange'));
     }
 
     document.querySelectorAll(".lang button").forEach(b => b.addEventListener("click", () => {
@@ -1030,6 +1546,7 @@
     const intro = document.getElementById("intro");
     const env = document.getElementById("env");
     function openInvite() {
+      if (window.slOpen) return window.slOpen(); // El sello y la pluma runs the opening once it has loaded
       if (env.classList.contains("open")) return;
       env.classList.add("open");
       try { sessionStorage.setItem("opened", "1"); } catch (e) {}
@@ -1147,6 +1664,8 @@
         const res = await fetch(FORM_ENDPOINT, { method: "POST", body: new URLSearchParams(data) });
         const result = await res.json();
         if (!result.ok) throw new Error(result.error || "RSVP was not saved");
+        // Sella tu respuesta: fade the form before the sealed envelope takes its place (never throws, waits at most 200ms)
+        try { if (window.rsBeforeThanks) await window.rsBeforeThanks(); } catch (rsErr) { console.error(rsErr); }
         document.getElementById("thanks-text").textContent = form.attendance.value === "accepts" ? t.yes : t.no;
         form.hidden = true;
         const thanks = document.getElementById("thanks");
@@ -1169,6 +1688,1571 @@
       const target = location.hash && document.getElementById(location.hash.slice(1));
       if (target) setTimeout(() => target.scrollIntoView({ behavior: "instant", block: "start" }), 50);
     });
+  
+    // ---------- Del mediodía a la madrugada: the order of events goes from noon to night ----------
+    // The paper warms row by row (cream, apricot, rose), turns to burgundy night above Baile, and stays dark to the end.
+    // Stops are measured in px at the rows, so they line up at every width. Without JS the section keeps its paper look.
+    (() => {
+      const section = document.getElementById("schedule");
+      const ol = section && section.querySelector("ol.timeline");
+      const sky = section && section.querySelector(".tn-sky");
+      if (!ol || !sky) return;
+      const rows = [...ol.children].filter(el => el.tagName === "LI");
+      if (rows.length < 3) return;
+      const root = document.documentElement;
+
+      // Pen: pathLength="1" on every shape of the timeline's icons, so one 0..1 dash draws each stroke
+      try {
+        if ("pathLength" in SVGGeometryElement.prototype) {
+          const ids = new Set();
+          ol.querySelectorAll(".tl-icon use").forEach(u => {
+            const id = (u.getAttribute("href") || u.getAttribute("xlink:href") || "").slice(1);
+            if (id.startsWith("i-")) ids.add(id);
+          });
+          ids.forEach(id => {
+            const sym = document.getElementById(id);
+            if (sym) sym.querySelectorAll("path, circle, ellipse, line, polyline, polygon, rect").forEach(s => s.setAttribute("pathLength", "1"));
+          });
+          if (ids.size) root.classList.add("tn-pen");
+        }
+      } catch (e) {}
+
+      // Baile and Fin are the night rows (the HTML marks them; this only covers a missing class)
+      let night = rows.findIndex(li => li.classList.contains("tn-night"));
+      if (night < 1) { night = rows.length; rows.forEach(li => li.classList.remove("tn-night")); }
+
+      const DUSK = ["var(--paper)", "var(--paper)", "var(--paper)", "var(--paper)", "var(--paper)", "var(--paper)"];
+      const TURN = "#5C1C27", NIGHT = "var(--ink-deep)";
+      const tone = i => i >= night ? NIGHT : DUSK[Math.min(i, DUSK.length - 1)];
+
+      rows.forEach((li, i) => {
+        li.classList.remove("reveal");                     // the rows get their own entrance
+        try { io.unobserve(li); } catch (e) {}
+        li.style.setProperty("--tn-bg", tone(i));          // the heart's disc matches its own row's sky
+      });
+      root.classList.add("tn-on");
+
+      const px = v => Math.round(v) + "px";
+      const yIn = el => {                                  // top of el inside #schedule's padding box
+        let y = 0, n = el;
+        while (n && n !== section) { y += n.offsetTop; n = n.offsetParent; }
+        return n ? y : el.getBoundingClientRect().top - section.getBoundingClientRect().top - section.clientTop;
+      };
+      let drawn = "";
+      function paint() {
+        try {
+          const tops = rows.map(yIn), hs = rows.map(li => li.offsetHeight);
+          const key = tops.join() + "/" + hs.join();
+          if (key === drawn) return;
+          drawn = key;
+          const stops = [DUSK[0] + " 0px"];
+          for (let i = 0; i < night; i++) stops.push(tone(i) + " " + px(tops[i] + hs[i] / 2));
+          if (night < rows.length) {
+            const dusk = tops[night - 1] + hs[night - 1], dark = tops[night];
+            stops.push(tone(night - 1) + " " + px(dusk), TURN + " " + px(dusk + (dark - dusk) * 0.7), NIGHT + " " + px(dark), NIGHT + " 100%");
+            sky.style.setProperty("--tn-night", px(dark));
+            const cut = px((dusk + dark) / 2 - yIn(ol) - (parseFloat(getComputedStyle(ol, "::before").top) || 0));
+            ol.style.setProperty("--tn-spine", "linear-gradient(var(--ink) 0px, var(--ink) " + cut + ", var(--cream) " + cut + ", var(--cream) 100%)");
+          }
+          sky.style.backgroundImage = "linear-gradient(to bottom, " + stops.join(", ") + ")";
+        } catch (e) { root.classList.remove("tn-on"); }
+      }
+      if ("ResizeObserver" in window) {
+        const ro = new ResizeObserver(() => paint());
+        ro.observe(section);
+        ro.observe(ol);
+      } else {
+        paint();
+        addEventListener("resize", paint, { passive: true });
+      }
+      addEventListener("load", paint);
+
+      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // fully drawn and still; the sky stays
+      if (!("IntersectionObserver" in window)) { sky.classList.add("tn-vis"); return; }
+      // Stars twinkle only while the section is on screen
+      new IntersectionObserver(es => es.forEach(e => sky.classList.toggle("tn-vis", e.isIntersecting))).observe(section);
+      // Without scroll-driven animations, each row plays the same entrance once, as it arrives
+      if (!(window.CSS && CSS.supports && CSS.supports("animation-timeline", "view()"))) {
+        const arrive = new IntersectionObserver(es => es.forEach(e => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("tn-in");
+          arrive.unobserve(e.target);
+        }), { rootMargin: "0px 0px -10% 0px", threshold: 0.25 });
+        rows.forEach(li => arrive.observe(li));
+        root.classList.add("tn-io");
+      }
+    })();
+  
+
+    // ---------- El Giro (gr-): Edgar twirls Jasmin as you scroll ----------
+    (() => {
+      const sec = document.getElementById("gr-giro");
+      if (!sec) return;
+      // This section replaces the static tree band (CSS already hides it); drop the node so its photo never downloads
+      document.querySelectorAll("main > .band").forEach(b => b.remove());
+
+      const stage = sec.querySelector(".gr-stage");
+      const print = sec.querySelector(".gr-print");
+      const btn = sec.querySelector(".gr-play");
+      const imgs = [...print.querySelectorAll("img")];
+      const still = matchMedia("(prefers-reduced-motion: reduce)");
+      const saveData = !!(navigator.connection && navigator.connection.saveData);
+      const hasIO = "IntersectionObserver" in window;
+      const written = new Map();   // last opacity set on each frame, so a scroll tick only touches what changed
+
+      let frames = [], ready = false, loading = false, near = false, inView = false;
+      let playing = false, pendingPlay = false, soft = false, queued = false;
+      let pinTop = 0, range = 1, atF = 0, captionOn = null, easeTimer = 0;
+
+      const live = () => hasIO && !saveData && !still.matches;
+
+      function measure() {
+        pinTop = parseFloat(getComputedStyle(stage).top) || 0;          // the sticky offset (the header height)
+        range = Math.max(1, sec.offsetHeight - stage.offsetHeight);     // how far the stage stays pinned
+      }
+
+      // f runs 0 -> frames.length - 1: frame floor(f) fully shown, the next one (stacked above it) fading in
+      function paint(f) {
+        const last = frames.length - 1;
+        f = Math.max(0, Math.min(last, f));
+        const i = Math.floor(f), t = Math.round((f - i) * 1000) / 1000;
+        atF = f;
+        frames.forEach((img, k) => {
+          const o = k === i ? 1 : k === i + 1 ? t : 0;
+          if (written.get(img) !== o) { img.style.opacity = o; written.set(img, o); }
+        });
+      }
+
+      function setCaption(on) {
+        if (on === captionOn) return;
+        captionOn = on;
+        sec.classList.toggle("gr-end", on);
+      }
+
+      // A short CSS crossfade for jumps that do not come from scrolling (frames arriving late, after the Twirl button)
+      function ease() {
+        print.classList.add("gr-ease");
+        clearTimeout(easeTimer);
+        easeTimer = setTimeout(() => print.classList.remove("gr-ease"), 340);
+      }
+
+      function update() {
+        queued = false;
+        if (!inView || playing || !live()) return;
+        const p = Math.max(0, Math.min(1, (pinTop - sec.getBoundingClientRect().top) / range));
+        setCaption(p > 0.8);
+        if (!ready) return;
+        if (soft) { soft = false; ease(); }
+        paint(p * (frames.length - 1));
+      }
+      function schedule() {
+        if (!queued) { queued = true; requestAnimationFrame(update); }
+      }
+
+      // Resolves true once a frame is loaded and decoded, false if it failed (a missing frame is simply skipped)
+      function settle(img) {
+        const viaEvents = () => new Promise(done => {
+          if (img.complete) return done(img.naturalWidth > 0);
+          img.addEventListener("load", () => done(true), { once: true });
+          img.addEventListener("error", () => done(false), { once: true });
+        });
+        return img.decode ? img.decode().then(() => true, viaEvents) : viaEvents();
+      }
+
+      function load() {
+        if (loading || !live()) return;
+        loading = true;
+        imgs.forEach(img => {
+          img.loading = "eager";
+          if (img.dataset.src) { img.src = img.dataset.src; img.removeAttribute("data-src"); }
+        });
+        Promise.all(imgs.map(settle)).then(ok => {
+          frames = imgs.filter((img, k) => ok[k]);
+          if (frames.length < 2) { pendingPlay = false; sec.classList.add("gr-still"); return; }
+          ready = true;
+          soft = true;
+          if (pendingPlay) { pendingPlay = false; play(); } else schedule();
+        });
+      }
+
+      // The Twirl button: frames 1 to 9 once, about 10 a second, each dissolving into the next
+      function play() {
+        if (playing || !live()) return;
+        if (!ready) { pendingPlay = true; load(); return; }
+        playing = true;
+        sec.classList.add("gr-playing");
+        const last = frames.length - 1;
+        const run = () => {
+          if (!playing) return;
+          print.classList.remove("gr-ease");
+          let t0 = 0;
+          const step = now => {
+            if (!playing) return;
+            if (!t0) t0 = now;
+            const f = Math.min(last, (now - t0) / 100);
+            paint(f);
+            if (f < last) { requestAnimationFrame(step); return; }
+            playing = false;
+            soft = true;                       // the next scroll eases back to where the page is
+            sec.classList.remove("gr-playing");
+            setCaption(true);
+          };
+          requestAnimationFrame(step);
+        };
+        if (atF > 0.05) { ease(); paint(0); setTimeout(run, 300); } else run();
+      }
+      if (btn) btn.addEventListener("click", play);
+
+      function applyMode() {
+        const on = live();
+        sec.classList.toggle("gr-live", on);
+        if (on) { soft = true; measure(); if (near) load(); schedule(); return; }
+        // Still: the first frame (they face each other), caption shown, no button
+        playing = pendingPlay = false;
+        clearTimeout(easeTimer);
+        sec.classList.remove("gr-end", "gr-playing");
+        print.classList.remove("gr-ease");
+        captionOn = null;
+        atF = 0;
+        written.clear();
+        imgs.forEach(img => { img.style.opacity = ""; });
+      }
+
+      if (hasIO) {
+        // Fetch the other 8 frames only when the guest is within 1.5 screens (never on the /#rsvp landing)
+        new IntersectionObserver(entries => {
+          near = entries[entries.length - 1].isIntersecting;
+          if (near) load();
+        }, { rootMargin: "150% 0px" }).observe(sec);
+        new IntersectionObserver(entries => {
+          inView = entries[entries.length - 1].isIntersecting;
+          if (inView) { measure(); schedule(); }
+        }).observe(sec);
+      }
+      window.addEventListener("scroll", () => { if (inView) schedule(); }, { passive: true });
+      window.addEventListener("resize", () => { if (live()) { measure(); schedule(); } });
+      if (still.addEventListener) still.addEventListener("change", applyMode);
+      else if (still.addListener) still.addListener(applyMode);
+      applyMode();
+    })();
+
+  
+
+    // ---------- El sello y la pluma: the wax seal cracks, names are written in ink ----------
+    (() => {
+      try {
+        const root = document.documentElement;
+        const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const guest = typeof para === "string" ? para : "";
+
+        // The pen. A script line moves into an inline .sl-write box; the ink mask sweeps it on .sl-ink or when its parent gets .in
+        const inkWrap = host => {
+          if (!host) return null;
+          const first = host.firstElementChild;
+          if (first && first.classList.contains("sl-write")) return first;
+          const ink = document.createElement("span");
+          ink.className = "sl-write";
+          while (host.firstChild) ink.appendChild(host.firstChild);
+          host.appendChild(ink);
+          return ink;
+        };
+        document.addEventListener("animationend", e => {
+          if (e.animationName === "sl-pen") e.target.classList.add("sl-done");
+        });
+
+        const vow = document.querySelector(".countdown-band .script");
+        if (!still) {
+          [document.querySelector(".card .title"), vow, document.querySelector("footer .script")].forEach(line => {
+            if (!inkWrap(line)) return;
+            // The existing reveal observer adds .in when the line itself scrolls into view (observing twice is a no-op)
+            if (typeof io === "object" && io) io.observe(line); else line.classList.add("in");
+          });
+        }
+
+        // Language: rebuild the envelope's "Para"/"For", and re-wrap 'hasta el sí' after setLang swaps its text
+        document.addEventListener("langchange", () => {
+          const to = document.getElementById("env-to");
+          if (to && guest) (to.querySelector(".sl-write") || to).textContent = (lang === "es" ? "Para " : "For ") + guest;
+          if (!still && vow && vow.isConnected && !vow.querySelector(".sl-write")) {
+            const ink = inkWrap(vow);
+            if (vow.classList.contains("in")) ink.classList.add("sl-done");
+          }
+        });
+
+        // The seal. Only when the head script turned the intro on (first visit, no #hash, motion allowed)
+        const box = document.getElementById("intro");
+        const envEl = document.getElementById("env");
+        if (!box || !envEl || !root.classList.contains("intro-on")) return;
+        const seal = envEl.querySelector(".seal");
+        const nameTo = document.getElementById("env-to");
+        const nameInk = nameTo && nameTo.textContent.trim() ? inkWrap(nameTo) : null;
+
+        if (nameInk) {
+          // The family name writes itself ~700ms after the envelope shows, once the script font is ready (never waits past 1.8s)
+          box.classList.add("sl-named");
+          const fontIn = document.fonts && document.fonts.load
+            ? document.fonts.load('1em "Great Vibes"').catch(() => {})
+            : Promise.resolve();
+          requestAnimationFrame(() => {
+            const shown = performance.now();
+            Promise.race([fontIn, new Promise(r => setTimeout(r, 1800))]).then(() => {
+              setTimeout(() => nameInk.classList.add("sl-ink"), Math.max(0, 700 - (performance.now() - shown)));
+            });
+          });
+        }
+
+        let phase = 0; // 0 waiting, 1 opening, 2 done
+        const timers = [];
+        const later = (ms, fn) => { timers.push(setTimeout(fn, ms)); };
+        const finish = () => {
+          if (phase === 2) return;
+          phase = 2;
+          timers.forEach(clearTimeout);
+          document.removeEventListener("keydown", onKey);
+          root.classList.remove("intro-on");
+          box.remove();
+          const h1 = document.querySelector(".hero h1");
+          if (h1) { h1.tabIndex = -1; h1.focus({ preventScroll: true }); }
+        };
+        const onKey = e => { if (e.key === "Escape") finish(); };
+
+        const crack = () => {
+          envEl.classList.add("sl-cracked");
+          if (seal) {
+            [[47, 24, -14, 58, -70, 4], [51, 34, -3, 96, 60, 4], [55, 43, 16, 74, 110, 3], [46, 64, -9, 86, 200, 5], [52, 83, 12, 64, -140, 3]]
+              .forEach(([x, y, dx, dy, r, w], i) => {
+                const bit = document.createElement("i");
+                bit.className = "sl-crumb";
+                bit.style.cssText = `left:${x}%;top:${y}%;--w:${w}px;--dx:${dx}px;--dy:${dy}px;--r:${r}deg;animation-delay:${i * 25}ms`;
+                seal.appendChild(bit);
+              });
+          }
+          if (!navigator.userActivation || navigator.userActivation.hasBeenActive) navigator.vibrate?.(12);
+        };
+
+        const start = () => {
+          phase = 1;
+          try { sessionStorage.setItem("opened", "1"); } catch (e) {}
+          if (nameInk) nameInk.classList.add("sl-ink");
+          box.classList.add("sl-live");     // keeps the overlay laid out once intro-on is removed
+          envEl.classList.add("sl-press");  // seal presses in; flap (250ms) and letter (480ms) follow in CSS
+          later(0, () => document.addEventListener("keydown", onKey));
+          later(120, crack);
+          later(1350, () => { box.classList.add("sl-fade"); root.classList.remove("intro-on"); });
+          later(2000, finish);
+        };
+
+        box.addEventListener("click", e => { if (phase === 1 && !envEl.contains(e.target)) finish(); });
+        // openInvite() hands every envelope tap and the first Esc to this: the first opens, the next skips to the end
+        window.slOpen = () => (phase === 0 ? start() : finish());
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+
+  
+
+    // ---------- Sella tu respuesta: the reply folds into an envelope and is sealed ----------
+    // Nothing here runs before result.ok: the submit handler awaits rsBeforeThanks() right after that
+    // check, and the envelope plays when the handler opens #thanks. Any failure shows today's thanks.
+    // No syntax newer than the rest of this script (no ?. or ??), so older iPhones still parse the page.
+    (function () {
+      try {
+        const thanksEl = document.getElementById("thanks");
+        const formEl = document.getElementById("rsvp-form");
+        const sendBtn = document.getElementById("submit");
+        const envEl = thanksEl ? thanksEl.querySelector(".rs-env") : null;
+        if (!thanksEl || !formEl || !sendBtn || !envEl || !window.MutationObserver || !window.Promise) return;
+
+        const letterEl = envEl.querySelector(".env-letter");
+        const nameEl = envEl.querySelector(".rs-name");
+        const choiceEl = envEl.querySelector(".rs-choice");
+        const countEl = envEl.querySelector(".rs-count");
+        const sealEl = envEl.querySelector(".rs-seal");
+        const receiptEl = thanksEl.querySelector(".rs-receipt");
+        if (!letterEl || !nameEl || !choiceEl || !countEl || !sealEl || !receiptEl) return;
+
+        // Today's thanks lines keep their space but wait, invisible, until the seal is pressed
+        const kids = Array.prototype.slice.call(thanksEl.children);
+        const ruleEl = kids.filter(el => el.classList.contains("hdiv"))[0] || null;
+        const headEl = kids.filter(el => el.tagName === "P" && el.classList.contains("caps"))[0] || null;
+        const textEl = document.getElementById("thanks-text");
+        [ruleEl, headEl, textEl].forEach(el => { if (el) el.classList.add("rs-hold"); });
+        if (headEl) headEl.classList.add("rs-head");
+
+        const calm = () => !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+        const timers = [];
+        let prepared = false, started = false, landed = false, off = false, heartsPending = false;
+        let accepted = false, guests = "1";
+        let burst = function () {};
+
+        function guestsText() {
+          const n = parseInt(guests, 10) || 1;
+          if (lang === "en") return n + (n === 1 ? " guest" : " guests");
+          return n + (n === 1 ? " persona" : " personas");
+        }
+
+        // The answer exactly as the guest chose it, in the current language
+        function fillWords() {
+          const span = formEl.querySelector(".choice input:checked + span");
+          const choice = span ? span.textContent.replace(/\s+/g, " ").trim() : "";
+          const count = accepted ? guestsText() : "";
+          choiceEl.textContent = choice;
+          countEl.textContent = count;
+          receiptEl.textContent = [nameEl.textContent, choice, count].filter(Boolean).join(" · ");
+        }
+
+        function prepare() {
+          if (prepared) return;
+          const picked = formEl.querySelector('input[name="attendance"]:checked');
+          const nameInput = document.getElementById("name");
+          let who = nameInput ? nameInput.value.replace(/\s+/g, " ").trim() : "";
+          if (!picked || !who) throw new Error("Sella tu respuesta: no answer to seal");
+          if (who.length > 60) who = who.slice(0, 59).trim() + "…";
+          const guestsSelect = document.getElementById("guests");
+          accepted = picked.value === "accepts";
+          guests = guestsSelect ? guestsSelect.value : "1";
+          nameEl.textContent = who;
+          fillWords();
+          if (document.getElementById("sl-wax")) sealEl.classList.add("rs-wax");
+          else sealEl.classList.remove("rs-wax");
+          sendBtn.classList.remove("rs-sending");
+          thanksEl.classList.add("rs-ready");
+          if (!calm()) thanksEl.classList.add("rs-play");
+          prepared = true;
+        }
+
+        // Show today's thanks, exactly as before (hearts from the card if they were owed)
+        function giveUp(err) {
+          if (off) return;
+          off = true;
+          if (err) console.error(err);
+          timers.forEach(id => clearTimeout(id));
+          thanksEl.classList.remove("rs-ready", "rs-play");
+          formEl.classList.remove("rs-fade");
+          sendBtn.classList.remove("rs-sending");
+          if (heartsPending) { heartsPending = false; try { burst(thanksEl); } catch (e) {} }
+        }
+
+        function later(ms, fn) {
+          timers.push(setTimeout(() => {
+            if (off) return;
+            try { fn(); } catch (err) { giveUp(err); }
+          }, ms));
+        }
+
+        // Script names run wide: shrink a long one to fit the card, and let a very long one wrap
+        function fitName() {
+          nameEl.style.fontSize = "";
+          nameEl.style.whiteSpace = "nowrap";
+          nameEl.style.maxWidth = "none";
+          const natural = nameEl.getBoundingClientRect().width;
+          nameEl.style.maxWidth = "";
+          const room = letterEl.clientWidth - 32;
+          if (!natural || room <= 0 || natural <= room) return;
+          const ideal = (parseFloat(getComputedStyle(nameEl).fontSize) || 28) * room / natural;
+          nameEl.style.fontSize = Math.max(16, Math.floor(ideal)) + "px";
+          if (ideal < 16) nameEl.style.whiteSpace = "normal";
+        }
+
+        // The form was much taller than the thanks, so bring the whole open envelope (flap included) into view
+        function place() {
+          const r = envEl.getBoundingClientRect();
+          if (!r.height) return;
+          const bar = document.querySelector(".bar");
+          const top = bar ? Math.max(0, bar.getBoundingClientRect().bottom) : 0;
+          const vh = window.innerHeight;
+          const want = Math.min(top + r.height * 0.62 + 10, Math.max(top + 8, vh - r.height - 16));
+          if (r.top >= want - 6 && r.bottom <= vh - 8) return;
+          const y = Math.max(0, (window.pageYOffset || 0) + r.top - want);
+          try {
+            if ("scrollBehavior" in document.documentElement.style) window.scrollTo({ top: y, left: 0, behavior: "instant" });
+            else window.scrollTo(0, y);
+          } catch (e) { window.scrollTo(0, y); }
+        }
+
+        function focusHead() {
+          if (!headEl) return;
+          headEl.setAttribute("tabindex", "-1");
+          if (receiptEl.textContent) headEl.setAttribute("aria-describedby", receiptEl.id);
+          headEl.focus();
+        }
+
+        function run() {
+          if (started || off) return;
+          started = true;
+          try {
+            prepare();
+            fitName();
+            place();
+            if (calm()) {
+              // Reduced motion: already sealed, receipt showing, no hearts (as today)
+              heartsPending = false;
+              landed = true;
+              envEl.classList.add("rs-still");
+              envEl.classList.remove("open");
+              sealEl.classList.add("rs-set");
+              thanksEl.classList.remove("rs-play");
+              focusHead();
+              return;
+            }
+            void envEl.offsetWidth;          // settle the open envelope, card up, before it closes
+            envEl.classList.remove("open");  // the card slides into the pocket; the flap folds from .55s
+            later(1300, () => sealEl.classList.add("rs-pressed"));
+            later(1420, () => {
+              landed = true;
+              try { if (navigator.vibrate) navigator.vibrate(15); } catch (e) {}
+              if (heartsPending) { heartsPending = false; burst(sealEl); }
+            });
+            later(1680, () => {
+              thanksEl.classList.remove("rs-play");
+              focusHead();
+            });
+          } catch (err) { giveUp(err); }
+        }
+
+        // Called by the submit handler right after result.ok: fades the form, never rejects, waits at most 200ms
+        window.rsBeforeThanks = function () {
+          return new Promise(resolve => {
+            try {
+              if (off) return resolve();
+              prepare();
+              if (calm()) return resolve();
+              formEl.classList.add("rs-fade");
+              setTimeout(resolve, 200);
+              setTimeout(() => {
+                if (started) return;
+                if (prepared) giveUp(new Error("Sella tu respuesta: thanks did not open"));
+                else formEl.classList.remove("rs-fade");
+              }, 1200);
+            } catch (err) { giveUp(err); resolve(); }
+          });
+        };
+
+        // The envelope plays when the handler opens #thanks (which only happens after result.ok)
+        const opened = new MutationObserver(() => {
+          if (thanksEl.hidden) return;
+          opened.disconnect();
+          run();
+        });
+        opened.observe(thanksEl, { attributes: true, attributeFilter: ["hidden"] });
+
+        // Sending state: the handler disables the button only while the fetch is pending
+        new MutationObserver(() => {
+          if (sendBtn.disabled) {
+            if (!prepared) sendBtn.classList.add("rs-sending");
+            return;
+          }
+          sendBtn.classList.remove("rs-sending");
+          formEl.classList.remove("rs-fade");
+          if (prepared && !started) { prepared = false; thanksEl.classList.remove("rs-ready", "rs-play"); }
+        }).observe(sendBtn, { attributes: true, attributeFilter: ["disabled"] });
+
+        // Language: setLang always rewrites <html lang>, after the .choice spans have been swapped
+        new MutationObserver(() => {
+          if (!prepared || off) return;
+          try { fillWords(); } catch (err) { console.error(err); }
+        }).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+
+        // Hearts leave from the seal, not the card: hold the handler's celebrate(thanks) until the seal lands
+        if (typeof celebrate === "function") {
+          const original = celebrate;
+          burst = from => original(from);
+          celebrate = function (from) {
+            if (from !== thanksEl || off) return original.apply(this, arguments);
+            if (landed) return original(sealEl);
+            heartsPending = true;
+            setTimeout(() => {
+              if (heartsPending && !started) { heartsPending = false; original(thanksEl); }
+            }, 80);
+          };
+        }
+      } catch (err) { console.error(err); }
+    })();
+
+  
+    // ---------- El Pase (ps-): reserved seats, a remembered reply, a keepsake to save, WhatsApp ----------
+    (() => {
+      const $ = id => document.getElementById(id);
+      const L = () => (lang === "en" ? "en" : "es");
+      const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+      const params = new URLSearchParams(location.search);
+      const pasesN = parseInt(params.get("pases"), 10);
+      const pases = Number.isNaN(pasesN) ? 0 : clamp(pasesN, 1, 10);
+      const paraName = (params.get("para") || "").trim().replace(/\s+/g, " ").slice(0, 60);
+      let sheet = null, sheetURL = "", sheetFile = null, sheetMode = "invite", sheetFrom = null, busy = false, assets = null;
+
+      const T = {
+        es: {
+          envSeats: n => (n === 1 ? "Pase para 1 persona" : "Pase para " + n + " personas"),
+          seats: n => (n === 1 ? "Hemos reservado un lugar en su honor" : "Hemos reservado " + n + " lugares en su honor"),
+          people: n => (n === 1 ? "1 persona" : n + " personas"),
+          replied: "Ya confirmaste",
+          view: "Ver tu pase",
+          declined: "Ya nos respondiste · ¡Gracias!",
+          change: "Si algo cambió, envía una nueva respuesta abajo.",
+          guests: "¿Cuántas personas vienen, contándote a ti y a los niños?",
+          preparing: "Preparando tu imagen…",
+          failed: "No pudimos crear la imagen. Por favor intenta de nuevo.",
+          hold: "Mantén presionada la imagen para guardarla",
+          download: "Descargar imagen",
+          share: "Compartir",
+          close: "Cerrar",
+          titleInvite: "Tu invitación",
+          titlePass: "Tu pase",
+          shareTitle: "Boda de Jasmin y Edgar",
+          alt: mode => (mode === "pass" ? "Pase" : "Invitación") + " para la boda de Jasmin y Edgar: sábado 14 de noviembre de 2026 en Houston, Texas. Misa a las 12:00 PM en Corpus Christi Catholic Church, 9900 Stella Link Rd. Recepción a las 5:30 PM en Rancho Rio Grande Zacatecas, 5419 Schurmier Rd.",
+          wa: ["*Boda de Jasmin y Edgar*", "Sábado 14 de noviembre de 2026 · Houston, Texas", "",
+               "*Misa* · 12:00 PM", "Corpus Christi Catholic Church", "9900 Stella Link Rd, Houston TX 77025", "",
+               "*Recepción* · 5:30 PM", "Rancho Rio Grande Zacatecas", "5419 Schurmier Rd, Houston TX 77048", "",
+               "https://jasminandedgar.com"].join("\n")
+        },
+        en: {
+          envSeats: n => "Admits " + n,
+          seats: n => (n === 1 ? "We have reserved a seat in your honor" : "We have reserved " + n + " seats in your honor"),
+          people: n => (n === 1 ? "1 guest" : n + " guests"),
+          replied: "You already replied",
+          view: "View your pass",
+          declined: "You already replied · Thank you!",
+          change: "If anything changed, just send a new reply below.",
+          guests: "How many are coming, counting yourself and any children?",
+          preparing: "Preparing your image…",
+          failed: "We couldn't create the image. Please try again.",
+          hold: "Press and hold the image to save it",
+          download: "Download image",
+          share: "Share",
+          close: "Close",
+          titleInvite: "Your invitation",
+          titlePass: "Your pass",
+          shareTitle: "Jasmin & Edgar's wedding",
+          alt: mode => (mode === "pass" ? "Pass" : "Invitation") + " for Jasmin & Edgar's wedding: Saturday, November 14, 2026 in Houston, Texas. Ceremony at 12:00 PM at Corpus Christi Catholic Church, 9900 Stella Link Rd. Reception at 5:30 PM at Rancho Rio Grande Zacatecas, 5419 Schurmier Rd.",
+          wa: ["*Jasmin & Edgar's wedding*", "Saturday, November 14, 2026 · Houston, Texas", "",
+               "*Ceremony* · 12:00 PM", "Corpus Christi Catholic Church", "9900 Stella Link Rd, Houston TX 77025", "",
+               "*Reception* · 5:30 PM", "Rancho Rio Grande Zacatecas", "5419 Schurmier Rd, Houston TX 77048", "",
+               "https://jasminandedgar.com"].join("\n")
+        }
+      };
+
+      // B. The guests question counts everyone, children included. setLang reads these back on every switch.
+      const guestsLabel = document.querySelector('label[for="guests"]');
+      if (guestsLabel) {
+        guestsLabel.dataset.en = T.en.guests;
+        guestsLabel.dataset.es = T.es.guests;
+        guestsLabel.textContent = T[L()].guests;
+      }
+
+      // A. Reserved seats from ?pases=4 (clamped 1 to 10). Without it the page is exactly as before.
+      if (pases) {
+        ["ps-env-seats", "ps-seats"].forEach(id => { const el = $(id); if (el) el.hidden = false; });
+        const select = $("guests");
+        if (select) [...select.options].forEach(o => { if (parseInt(o.value, 10) > pases) o.remove(); });
+      }
+
+      // C. Remember a reply on this device, saved only after the Sheet confirmed it
+      const KEY = "ps-rsvp";
+      const clean = r => (r && (r.attendance === "accepts" || r.attendance === "declines")) ? {
+        name: String(r.name || "").trim().replace(/\s+/g, " ").slice(0, 80),
+        attendance: r.attendance,
+        guests: r.attendance === "accepts" ? clamp(parseInt(r.guests, 10) || 1, 1, 10) : 0,
+        at: String(r.at || "")
+      } : null;
+      let record = null;
+      try { record = clean(JSON.parse(localStorage.getItem(KEY) || "null")); } catch (e) {}
+      let repliedNow = false;
+      const accepted = () => !!record && record.attendance === "accepts";
+
+      const rsvpForm = $("rsvp-form"), thanksBox = $("thanks");
+      const readForm = () => {
+        const picked = rsvpForm && rsvpForm.querySelector('input[name="attendance"]:checked');
+        return clean({ name: ($("name") || {}).value, attendance: picked ? picked.value : "", guests: ($("guests") || {}).value, at: new Date().toISOString() });
+      };
+      // A read-only snapshot of what is being sent. The submit handler, its payload and FORM_ENDPOINT are untouched.
+      let sending = null;
+      if (rsvpForm) rsvpForm.addEventListener("submit", () => { sending = readForm(); }, true);
+      // The thanks panel is only revealed after result.ok, so its reveal is the success signal.
+      if (thanksBox) {
+        let shown = !thanksBox.hidden;
+        new MutationObserver(() => {
+          const now = !thanksBox.hidden;
+          if (now && !shown) replied();
+          shown = now;
+        }).observe(thanksBox, { attributes: true, attributeFilter: ["hidden"] });
+      }
+      function replied() {
+        const r = sending || readForm();
+        if (!r) return;
+        r.at = new Date().toISOString();
+        record = r;
+        repliedNow = true;
+        try { localStorage.setItem(KEY, JSON.stringify(r)); } catch (e) {}
+        const box = $("ps-thanks");
+        if (box) box.hidden = r.attendance !== "accepts";
+        render();
+      }
+
+      function render() {
+        const t = T[L()];
+        const envSeats = $("ps-env-seats"), seats = $("ps-seats"), memo = $("ps-memo");
+        if (pases && envSeats) envSeats.textContent = t.envSeats(pases);
+        if (pases && seats) seats.textContent = t.seats(pases);
+        if (memo) {
+          memo.hidden = !record || repliedNow;
+          if (record) {
+            const yes = record.attendance === "accepts";
+            $("ps-memo-text").textContent = yes ? t.replied + " · " + t.people(record.guests) : t.declined;
+            $("ps-memo-more").hidden = !yes;
+            $("ps-memo-view").textContent = t.view;
+            $("ps-memo-sub").textContent = t.change;
+          }
+        }
+        const wa = "https://wa.me/?text=" + encodeURIComponent(t.wa);
+        document.querySelectorAll(".ps-wa").forEach(a => { a.href = wa; });
+        if (sheet) sheetText();
+      }
+
+      // D. The keepsake: one 1080x1920 renderer that runs only when someone taps
+      const W = 1080, H = 1920, PHOTO_H = Math.round(H * 0.38);
+      const FOCAL_Y = 0.5; // which slice of path.jpg (portrait) fills the photo band: 0 = top, 1 = bottom
+      const PX = 48, PY = 690, PW = W - PX * 2, PH = H - PY - 48, IN = 19;
+      const TOP = PY + 106, BOTTOM = PY + PH - IN - 34, MAXW = PW - IN * 2 - 60, MIN = 44;
+      const INK = "#7A1F2B", PAPER = "#FAF3EA", PAPER_2 = "#F2E7DB", TEXT = "#4A3033", MUTED = "#85696B", WAX = "#F4D8C8";
+      const FONT = {
+        caps: s => "400 " + s + 'px Cinzel, "Trajan Pro", Georgia, serif',
+        it: s => "italic 400 " + s + 'px "Cormorant Garamond", Georgia, serif',
+        script: s => "400 " + s + 'px "Great Vibes", "Snell Roundhand", cursive'
+      };
+      const heartPath = document.querySelector("#heart path");
+      const HEART_D = (heartPath && heartPath.getAttribute("d")) || "M5 9.2C4.4 8.3 1 6.6 1 3.9A2.1 2.1 0 0 1 5 2.8 2.1 2.1 0 0 1 9 3.9C9 6.6 5.6 8.3 5 9.2z";
+
+      function setFont(ctx, kind, size, spacing) {
+        ctx.font = FONT[kind](size);
+        if ("letterSpacing" in ctx) ctx.letterSpacing = (spacing != null ? spacing : kind === "caps" ? Math.round(size * 0.08) : 0) + "px";
+      }
+      const tracking = ctx => ("letterSpacing" in ctx ? parseFloat(ctx.letterSpacing) || 0 : 0);
+      const widthOf = (ctx, kind, size, text) => { setFont(ctx, kind, size); return ctx.measureText(text).width; };
+
+      function wrapText(ctx, text, kind, size, maxLines) {
+        // Prefer a balanced two-line break at " · ", then at a space; greedy wrap only as a last resort
+        for (const sep of [" · ", " "]) {
+          const parts = text.split(sep);
+          if (parts.length < 2) continue;
+          let best = null;
+          for (let i = 1; i < parts.length; i++) {
+            const two = [parts.slice(0, i).join(sep), parts.slice(i).join(sep)];
+            const widest = Math.max(widthOf(ctx, kind, size, two[0]), widthOf(ctx, kind, size, two[1]));
+            if (!best || widest < best.widest) best = { widest, two };
+          }
+          if (best.widest <= MAXW) return best.two;
+        }
+        const out = [];
+        let line = "";
+        text.split(" ").forEach(word => {
+          const next = line ? line + " " + word : word;
+          if (line && widthOf(ctx, kind, size, next) > MAXW) { out.push(line); line = word; } else line = next;
+        });
+        if (line) out.push(line);
+        if (out.length > maxLines) out.splice(maxLines - 1, out.length, out.slice(maxLines - 1).join(" "));
+        return out;
+      }
+      function fit(ctx, text, kind, size, maxLines) {
+        // Shrink toward the floor (never under 44px), then wrap
+        const floor = kind === "script" ? Math.max(MIN, Math.round(size * 0.8)) : MIN;
+        let s = size;
+        while (s > floor && widthOf(ctx, kind, s, text) > MAXW) s -= 2;
+        s = Math.max(floor, s);
+        return { size: s, lines: widthOf(ctx, kind, s, text) <= MAXW ? [text] : wrapText(ctx, text, kind, s, maxLines) };
+      }
+      function textBlock(ctx, rows) {
+        const lines = [];
+        rows.forEach(r => {
+          const f = fit(ctx, r.text, r.kind, r.size, r.maxLines || 3);
+          f.lines.forEach(text => lines.push({ text, kind: r.kind, size: f.size, color: r.color, lh: Math.round(f.size * (r.kind === "script" ? 1.14 : 1.17)) }));
+        });
+        return {
+          h: lines.reduce((sum, l) => sum + l.lh, 0),
+          draw(ctx, y) {
+            ctx.textAlign = "center";
+            lines.forEach(l => {
+              setFont(ctx, l.kind, l.size);
+              ctx.fillStyle = l.color;
+              ctx.fillText(l.text, W / 2 + tracking(ctx) / 2, y + l.lh / 2 + l.size * (l.kind === "script" ? 0.3 : 0.34), MAXW);
+              y += l.lh;
+            });
+          }
+        };
+      }
+      function namesBlock(ctx) {
+        // The couple's names exactly as the hero sets them: caps names, script ampersand, Jasmin first
+        const spans = [...document.querySelectorAll(".hero .names span")].map(s => s.textContent.trim());
+        const [first, amp, second] = spans.length === 3 && spans.every(Boolean) ? spans : ["Jasmin", "&", "Edgar"];
+        const make = k => [
+          { text: first.toUpperCase(), kind: "caps", size: Math.max(MIN, Math.round(72 * k)) },
+          { text: amp, kind: "script", size: Math.max(MIN, Math.round(96 * k)) },
+          { text: second.toUpperCase(), kind: "caps", size: Math.max(MIN, Math.round(72 * k)) }
+        ];
+        let segs = make(1), gap = 22;
+        let widths = segs.map(s => widthOf(ctx, s.kind, s.size, s.text));
+        let total = widths.reduce((a, b) => a + b, 0) + gap * 2;
+        if (total > MAXW) {
+          const k = MAXW / total;
+          segs = make(k);
+          gap = Math.round(gap * k);
+          widths = segs.map(s => widthOf(ctx, s.kind, s.size, s.text));
+          total = widths.reduce((a, b) => a + b, 0) + gap * 2;
+        }
+        const h = Math.round(segs[1].size * 1.08);
+        return {
+          h,
+          draw(ctx, y) {
+            const base = y + h / 2 + segs[0].size * 0.35;
+            let x = (W - total) / 2;
+            ctx.textAlign = "left";
+            ctx.fillStyle = INK;
+            segs.forEach((s, i) => {
+              setFont(ctx, s.kind, s.size);
+              ctx.fillText(s.text, x, s.kind === "script" ? base + s.size * 0.04 : base);
+              x += widths[i] + gap;
+            });
+            ctx.textAlign = "center";
+          }
+        };
+      }
+      function drawHeart(ctx, cx, cy, size) {
+        if (typeof Path2D !== "function") return;
+        ctx.save();
+        ctx.translate(cx - size / 2, cy - size * 0.57);
+        ctx.scale(size / 10, size / 10);
+        ctx.fill(new Path2D(HEART_D));
+        ctx.restore();
+      }
+      function ruleBlock() {
+        // The card's heart divider
+        return {
+          h: 30, optional: true,
+          draw(ctx, y) {
+            const cy = y + 15;
+            ctx.fillStyle = INK;
+            ctx.globalAlpha = 0.55;
+            ctx.fillRect(W / 2 - 30 - 170, cy - 1, 170, 2);
+            ctx.fillRect(W / 2 + 30, cy - 1, 170, 2);
+            ctx.globalAlpha = 1;
+            drawHeart(ctx, W / 2, cy, 30);
+          }
+        };
+      }
+      function drawPhoto(ctx, img) {
+        const iw = img ? img.naturalWidth || img.width : 0, ih = img ? img.naturalHeight || img.height : 0;
+        if (!iw || !ih) {
+          const wash = ctx.createLinearGradient(0, 0, 0, PHOTO_H);
+          wash.addColorStop(0, PAPER_2);
+          wash.addColorStop(1, PAPER);
+          ctx.fillStyle = wash;
+          ctx.fillRect(0, 0, W, PHOTO_H);
+          return;
+        }
+        const s = Math.max(W / iw, PHOTO_H / ih), sw = W / s, sh = PHOTO_H / s;
+        ctx.drawImage(img, (iw - sw) / 2, (ih - sh) * FOCAL_Y, sw, sh, 0, 0, W, PHOTO_H);
+        const from = Math.floor(PHOTO_H * 0.56);
+        const fade = ctx.createLinearGradient(0, from, 0, PHOTO_H);
+        fade.addColorStop(0, "rgba(250, 243, 234, 0)");
+        fade.addColorStop(1, PAPER);
+        ctx.fillStyle = fade;
+        ctx.fillRect(0, from, W, PHOTO_H - from + 1);
+      }
+      function drawMono(ctx, img) {
+        // The laurel sits like a medallion on the top rule; E and J are set in Great Vibes where the symbol puts them
+        const w = 184, h = w * 110 / 120, k = w / 120, cx = W / 2, cy = PY + 6, x = cx - w / 2, y = cy - h / 2;
+        const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, 134);
+        halo.addColorStop(0, PAPER);
+        halo.addColorStop(0.8, PAPER);
+        halo.addColorStop(1, "rgba(250, 243, 234, 0)");
+        ctx.fillStyle = halo;
+        ctx.fillRect(cx - 134, cy - 134, 268, 268);
+        ctx.fillStyle = INK;
+        if (img) ctx.drawImage(img, x, y, w, h);
+        else drawHeart(ctx, x + 60 * k, y + 55.6 * k, 6.5 * k);
+        setFont(ctx, "script", Math.max(MIN, Math.round(31 * k)));
+        ctx.textAlign = "center";
+        ctx.fillText("E", x + 46 * k, y + 66 * k);
+        ctx.fillText("J", x + 74 * k, y + 66 * k);
+      }
+      function drawImprint(ctx) {
+        // The address of the site, set into the bottom double rule like a printer's imprint
+        const text = "jasminandedgar.com", cy = PY + PH - IN / 2 - 1;
+        setFont(ctx, "caps", MIN);
+        const w = ctx.measureText(text).width, ls = tracking(ctx);
+        ctx.fillStyle = PAPER;
+        ctx.fillRect(W / 2 - w / 2 - 28, cy - 28, w + 56, 56);
+        ctx.fillStyle = INK;
+        ctx.textAlign = "center";
+        ctx.fillText(text, W / 2 + ls / 2, cy + MIN * 0.27);
+      }
+      function arcText(ctx, str, r, top, spacing) {
+        const chars = [...str];
+        const ws = chars.map(ch => ctx.measureText(ch).width);
+        const total = ws.reduce((sum, w) => sum + w, 0) + spacing * (chars.length - 1);
+        const dir = top ? 1 : -1;
+        let th = (top ? -Math.PI / 2 : Math.PI / 2) - dir * (total / 2) / r;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        chars.forEach((ch, i) => {
+          th += dir * (ws[i] / 2) / r;
+          ctx.save();
+          ctx.translate(Math.cos(th) * r, Math.sin(th) * r);
+          ctx.rotate(th + dir * Math.PI / 2);
+          ctx.fillText(ch, 0, 0);
+          ctx.restore();
+          th += dir * (ws[i] / 2 + spacing) / r;
+        });
+      }
+      function drawSeal(ctx, cx, cy, R) {
+        // The same wax as the envelope's seal, pressed on the card's corner
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(-0.18);
+        ctx.beginPath();
+        for (let i = 0; i <= 96; i++) {
+          const a = (i / 96) * Math.PI * 2;
+          const r = R * (1 + 0.024 * Math.sin(a * 7 + 0.6) + 0.016 * Math.sin(a * 12 + 2.2) + 0.01 * Math.sin(a * 3 + 1.1));
+          if (i) ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); else ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.closePath();
+        const wax = ctx.createRadialGradient(-R * 0.34, -R * 0.4, R * 0.06, 0, 0, R * 1.08);
+        wax.addColorStop(0, "#B03A48");
+        wax.addColorStop(0.52, INK);
+        wax.addColorStop(1, "#551219");
+        ctx.shadowColor = "rgba(40, 8, 12, 0.38)";
+        ctx.shadowBlur = 28;
+        ctx.shadowOffsetY = 12;
+        ctx.fillStyle = wax;
+        ctx.fill();
+        ctx.shadowColor = "rgba(0, 0, 0, 0)";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.strokeStyle = "rgba(244, 216, 200, 0.42)";
+        ctx.lineWidth = 2.5;
+        [0.9, 0.56].forEach(f => { ctx.beginPath(); ctx.arc(0, 0, R * f, 0, Math.PI * 2); ctx.stroke(); });
+        ctx.fillStyle = WAX;
+        ctx.shadowColor = "rgba(30, 6, 10, 0.6)";
+        ctx.shadowOffsetY = 2;
+        ctx.shadowBlur = 2;
+        const rr = R * 0.73;
+        setFont(ctx, "caps", MIN, 0);
+        arcText(ctx, "CONFIRMADO", rr, true, 2);
+        setFont(ctx, "it", 50, 0);
+        arcText(ctx, "Confirmed", rr, false, 2);
+        drawHeart(ctx, -rr, 0, 20);
+        drawHeart(ctx, rr, 0, 20);
+        setFont(ctx, "script", 92, 0);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("EJ", 0, R * 0.05);
+        ctx.restore();
+      }
+      function buildBlocks(ctx, mode, data) {
+        // The printed card's pairs: Spanish in caps over English in italic, so the image needs no language
+        const row = (text, kind, size, color, maxLines) => ({ text, kind, size, color, maxLines });
+        const block = (...rows) => textBlock(ctx, rows);
+        const out = [namesBlock(ctx), ruleBlock()];
+        if (mode === "pass") {
+          if (data.name) out.push(block(row(data.name, "script", 80, INK, 2)));
+          out.push(block(row(data.guests === 1 ? "1 PERSONA" : data.guests + " PERSONAS", "caps", 46, INK),
+                         row(data.guests === 1 ? "1 guest" : data.guests + " guests", "it", 48, MUTED)));
+        } else if (data.para) {
+          out.push(block(row("Para " + data.para, "script", 80, INK, 2)));
+        }
+        out.push(
+          block(row("SÁBADO 14 DE NOVIEMBRE DE 2026", "caps", 46, INK), row("Saturday, November 14, 2026 · Houston, Texas", "it", 48, MUTED)),
+          block(row("MISA · 12:00 PM", "caps", 46, INK), row("Ceremony · Corpus Christi Catholic Church", "it", 48, TEXT), row("9900 Stella Link Rd, Houston TX 77025", "it", 48, TEXT)),
+          block(row("RECEPCIÓN · 5:30 PM", "caps", 46, INK), row("Reception · Rancho Rio Grande Zacatecas", "it", 48, TEXT), row("5419 Schurmier Rd, Houston TX 77048", "it", 48, TEXT)),
+          block(row("LLEGAR 11:40 AM · SEMI-FORMAL", "caps", 46, INK), row("Arrive 11:40 AM · Semi-formal", "it", 48, MUTED))
+        );
+        if (mode !== "pass") out.push(block(row("CONFIRMA ANTES DEL 7 DE NOVIEMBRE", "caps", 46, INK), row("Please reply by November 7", "it", 48, MUTED)));
+        return out;
+      }
+      function layout(ctx, blocks) {
+        const room = BOTTOM - TOP, height = list => list.reduce((sum, b) => sum + b.h, 0);
+        let list = blocks;
+        if (height(list) + 10 * (list.length - 1) > room) list = list.filter(b => !b.optional);
+        const total = height(list), gaps = list.length - 1;
+        const gap = gaps ? clamp((room - total) / gaps, 8, 54) : 0;
+        let y = TOP + Math.max(0, (room - total - gap * gaps) / 2);
+        list.forEach(b => { b.draw(ctx, y); y += b.h + gap; });
+      }
+      function paint(mode, data, photo, mono) {
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = PAPER;
+        ctx.fillRect(0, 0, W, H);
+        drawPhoto(ctx, photo);
+        ctx.fillStyle = PAPER;
+        ctx.fillRect(PX, PY, PW, PH);
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(PX + 1.5, PY + 1.5, PW - 3, PH - 3);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(PX + IN, PY + IN, PW - IN * 2, PH - IN * 2);
+        drawMono(ctx, mono);
+        layout(ctx, buildBlocks(ctx, mode, data));
+        drawImprint(ctx);
+        if (mode === "pass") drawSeal(ctx, 872, 598, 160);
+        return canvas;
+      }
+      function fontsReady() {
+        try {
+          if (!document.fonts || !document.fonts.load) return Promise.resolve();
+          const all = Promise.all(['48px Cinzel', 'italic 48px "Cormorant Garamond"', '90px "Great Vibes"'].map(f => document.fonts.load(f).catch(() => null)));
+          return Promise.race([all, new Promise(done => setTimeout(done, 2000))]);
+        } catch (e) { return Promise.resolve(); }
+      }
+      function loadImg(src, ms) {
+        return new Promise(done => {
+          if (!src) { done(null); return; }
+          const img = new Image();
+          let settled = false;
+          const end = v => { if (!settled) { settled = true; done(v); } };
+          img.onload = () => end(img);
+          img.onerror = () => end(null);
+          setTimeout(() => end(null), ms);
+          img.src = src;
+        });
+      }
+      function monoURL() {
+        // #mono as a standalone SVG in ink, with its <text> removed (an SVG image cannot use the page's fonts)
+        try {
+          const sym = document.getElementById("mono");
+          if (!sym) return "";
+          const clone = sym.cloneNode(true);
+          clone.querySelectorAll("text").forEach(n => n.remove());
+          const body = [...clone.childNodes].map(n => new XMLSerializer().serializeToString(n)).join("").replace(/currentColor/g, INK);
+          const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + (sym.getAttribute("viewBox") || "0 0 120 110") + '" width="480" height="440" fill="' + INK + '">' + body + "</svg>";
+          return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        } catch (e) { return ""; }
+      }
+      function loadAssets() {
+        if (!assets) {
+          assets = Promise.all([fontsReady(), loadImg("path.jpg", 8000), loadImg(monoURL(), 3000)])
+            .then(([, photo, mono]) => { if (!photo) assets = null; return { photo, mono }; });
+        }
+        return assets;
+      }
+      function canvasBlob(canvas) {
+        return new Promise((resolve, reject) => {
+          try {
+            if (canvas.toBlob) {
+              canvas.toBlob(b => (b ? resolve(b) : reject(new Error("empty image"))), "image/jpeg", 0.92);
+            } else {
+              const bin = atob(canvas.toDataURL("image/jpeg", 0.92).split(",")[1]);
+              const bytes = new Uint8Array(bin.length);
+              for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+              resolve(new Blob([bytes], { type: "image/jpeg" }));
+            }
+          } catch (e) { reject(e); }
+        });
+      }
+      function passData() {
+        const r = accepted() ? record : null;
+        return { para: paraName, name: r ? r.name : paraName, guests: r ? r.guests : pases || 1 };
+      }
+      async function drawPase(mode) {
+        const { photo, mono } = await loadAssets();
+        const data = passData();
+        let canvas = paint(mode, data, photo, mono), blob;
+        try { blob = await canvasBlob(canvas); }
+        catch (e) {
+          // This browser tainted the canvas with the SVG laurel: redraw without it
+          canvas.width = canvas.height = 0;
+          canvas = paint(mode, data, photo, null);
+          blob = await canvasBlob(canvas);
+        }
+        canvas.width = canvas.height = 0; // release the bitmap right away (iOS keeps a tight canvas budget)
+        const name = mode === "pass" ? "pase-jasmin-y-edgar.jpg" : "invitacion-jasmin-y-edgar.jpg";
+        try { return new File([blob], name, { type: "image/jpeg", lastModified: Date.now() }); }
+        catch (e) { blob.name = name; return blob; }
+      }
+
+      // Share straight to the phone's sheet, or show the image to press and hold
+      function sheetText() {
+        const t = T[L()], q = s => sheet.querySelector(s);
+        q(".ps-sheet-close").textContent = t.close;
+        q(".ps-sheet-title").textContent = sheetMode === "pass" ? t.titlePass : t.titleInvite;
+        q(".ps-sheet-img").alt = t.alt(sheetMode);
+        q(".ps-sheet-hint").textContent = t.hold;
+        q(".ps-sheet-share").textContent = t.share;
+        q(".ps-sheet-dl").textContent = t.download;
+      }
+      function sheetClosed() {
+        if (sheetURL) URL.revokeObjectURL(sheetURL);
+        sheetURL = "";
+        sheetFile = null;
+        sheet.querySelector(".ps-sheet-img").removeAttribute("src");
+        if (sheetFrom && document.contains(sheetFrom)) sheetFrom.focus({ preventScroll: true });
+        sheetFrom = null;
+      }
+      function closeSheet() {
+        if (typeof sheet.close === "function" && sheet.open) sheet.close();
+        else { sheet.removeAttribute("open"); sheetClosed(); }
+      }
+      function openSheet(file, mode, canShare, from) {
+        if (!sheet) {
+          sheet = document.createElement("dialog");
+          sheet.className = "ps-sheet";
+          sheet.setAttribute("aria-labelledby", "ps-sheet-title");
+          sheet.innerHTML = '<div class="ps-sheet-in">'
+            + '<button type="button" class="ps-sheet-close"></button>'
+            + '<p class="ps-sheet-title" id="ps-sheet-title"></p>'
+            + '<img class="ps-sheet-img" alt="" width="1080" height="1920">'
+            + '<p class="ps-sheet-hint"></p>'
+            + '<div class="ps-sheet-actions"><button type="button" class="ps-btn ps-btn-ink ps-sheet-share" hidden></button><a class="ps-btn ps-sheet-dl" href="#"></a></div>'
+            + "</div>";
+          document.body.appendChild(sheet);
+          sheet.querySelector(".ps-sheet-close").addEventListener("click", closeSheet);
+          sheet.addEventListener("click", e => { if (e.target === sheet) closeSheet(); });
+          sheet.addEventListener("close", sheetClosed);
+          sheet.querySelector(".ps-sheet-share").addEventListener("click", () => {
+            if (sheetFile && navigator.share) navigator.share({ files: [sheetFile], title: T[L()].shareTitle }).catch(() => {});
+          });
+        }
+        if (sheetURL) URL.revokeObjectURL(sheetURL);
+        sheetURL = URL.createObjectURL(file);
+        sheetFile = file;
+        sheetMode = mode;
+        sheetFrom = from || null;
+        sheet.querySelector(".ps-sheet-img").src = sheetURL;
+        const dl = sheet.querySelector(".ps-sheet-dl");
+        dl.href = sheetURL;
+        dl.download = file.name || "jasmin-y-edgar.jpg";
+        sheet.querySelector(".ps-sheet-share").hidden = !canShare;
+        sheetText();
+        if (!sheet.open) {
+          if (typeof sheet.showModal === "function") sheet.showModal();
+          else sheet.setAttribute("open", "");
+        }
+      }
+      async function keepsake(mode, btn, status) {
+        if (busy) return;
+        busy = true;
+        btn.setAttribute("aria-busy", "true");
+        if (status) status.textContent = T[L()].preparing;
+        let file = null;
+        try { file = await drawPase(mode); } catch (e) { console.error(e); }
+        busy = false;
+        btn.removeAttribute("aria-busy");
+        if (status) status.textContent = file ? "" : T[L()].failed;
+        if (!file) return;
+        let canShare = false;
+        try { canShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) {}
+        if (canShare) {
+          try { await navigator.share({ files: [file], title: T[L()].shareTitle }); return; }
+          catch (e) { if (e && e.name === "AbortError") return; } // closed by the guest; anything else falls through to the preview
+        }
+        openSheet(file, mode, canShare, btn);
+      }
+
+      [["ps-save", "ps-status", () => (accepted() ? "pass" : "invite")],
+       ["ps-thanks-save", "ps-thanks-status", () => "pass"],
+       ["ps-memo-view", "ps-memo-status", () => "pass"]].forEach(([id, statusId, mode]) => {
+        const btn = $(id);
+        if (!btn) return;
+        btn.addEventListener("pointerdown", () => { loadAssets(); }, { passive: true }); // start fetching as the finger lands
+        btn.addEventListener("click", () => keepsake(mode(), btn, $(statusId)));
+      });
+
+      render();
+      // setLang always writes <html lang>, so this re-renders every JS string without wrapping setLang
+      new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] });
+    })();
+
+  
+
+    // ---------- Hoy (dy-): the right address at the right time ----------
+    // Two calendar events (each with its own address), a church-to-reception route, and from
+    // November 14 a live "Ahora / Sigue" card that always points to the right venue.
+    (() => {
+      function dyMain() {
+        const $ = id => document.getElementById(id);
+        const at = s => Date.parse(s);
+        const L = () => (lang === "en" ? "en" : "es");
+
+        // Both venues and the day as absolute instants in Houston time (CST, UTC-06:00; DST ended Nov 1).
+        // Everything compares the current instant against these, never against the phone's clock parts.
+        const DY = {
+          venues: {
+            misa: {
+              name: "Corpus Christi Catholic Church", street: "9900 Stella Link Rd", city: "Houston, TX 77025",
+              address: "Corpus Christi Catholic Church, 9900 Stella Link Rd, Houston, TX 77025",
+              maps: "https://maps.google.com/?q=Corpus+Christi+Catholic+Church+9900+Stella+Link+Rd+Houston+TX+77025"
+            },
+            recepcion: {
+              name: "Rancho Rio Grande Zacatecas", street: "5419 Schurmier Rd", city: "Houston, TX 77048",
+              address: "Rancho Rio Grande Zacatecas, 5419 Schurmier Rd, Houston, TX 77048",
+              maps: "https://maps.google.com/?q=5419+Schurmier+Rd+Houston+TX+77048"
+            }
+          },
+          route: "https://www.google.com/maps/dir/?api=1"
+            + "&origin=" + encodeURIComponent("9900 Stella Link Rd Houston TX 77025")
+            + "&destination=" + encodeURIComponent("5419 Schurmier Rd Houston TX 77048")
+            + "&travelmode=driving",
+          events: [
+            { at: at("2026-11-14T12:00:00-06:00"), t: "12:00 PM", icon: "#i-church", venue: "misa", es: "Misa", en: "Ceremony" },
+            { at: at("2026-11-14T17:30:00-06:00"), t: "5:30 PM", icon: "#i-rings", venue: "recepcion", es: "Recepción", en: "Reception" },
+            { at: at("2026-11-14T18:00:00-06:00"), t: "6:00 – 8:00 PM", icon: "#i-dinner", venue: "recepcion", es: "Cena", en: "Dinner" },
+            { at: at("2026-11-14T18:30:00-06:00"), t: "6:30 PM", icon: "#i-drinks", venue: "recepcion", es: "Bebidas", en: "Drinks" },
+            { at: at("2026-11-14T19:30:00-06:00"), t: "7:30 PM", icon: "#i-flower", venue: "recepcion", es: "Baile de las Flores", en: "Flower Dance" },
+            { at: at("2026-11-14T20:00:00-06:00"), t: "8:00 PM", icon: "#i-firstdance", venue: "recepcion", es: "Primer Baile", en: "First Dance" },
+            { at: at("2026-11-14T21:00:00-06:00"), t: "9:00 PM", icon: "#i-music", venue: "recepcion", es: "Baile", en: "Dancing" },
+            { at: at("2026-11-15T01:00:00-06:00"), t: "1:00 AM", icon: "#i-end", venue: "recepcion", es: "Fin", en: "The End" }
+          ],
+          dayStart: at("2026-11-14T00:00:00-06:00"),
+          soon: at("2026-11-14T11:00:00-06:00"),
+          // PLACEHOLDER until the couple confirms with the parish when Mass ends. It ends the Mass calendar event
+          // and starts "Tiempo libre" on the day card. It is never printed anywhere.
+          massEnd: at("2026-11-14T13:15:00-06:00"),
+          midnight: at("2026-11-15T00:00:00-06:00"),
+          after: at("2026-11-15T02:00:00-06:00")
+        };
+        const E = DY.events;
+
+        // Event names come from the Order of Events rows, so the wording always matches the timeline
+        const plain = html => { const tp = document.createElement("template"); tp.innerHTML = html; return tp.content.textContent.trim(); };
+        const rows = [...document.querySelectorAll(".timeline > li")];
+        E.forEach((ev, i) => {
+          ev.li = rows.find(li => { const u = li.querySelector(".tl-icon use"); return !!u && u.getAttribute("href") === ev.icon; }) || rows[i] || null;
+          const c = ev.li && ev.li.querySelector(".tl-text .caps[data-es]");
+          if (!c) return;
+          ev.es = plain(c.getAttribute("data-es")) || ev.es;
+          ev.en = plain(c.dataset.en || "") || ev.en;
+        });
+
+        /* ---- Add to calendar: two events, each with its own address ---- */
+        const isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
+        const CAL_DESC = {
+          es: "Llega a las 11:40 AM · Semi-formal · jasminandedgar.com",
+          en: "Please arrive by 11:40 AM · Semi-formal · jasminandedgar.com"
+        };
+        const CAL = [
+          { id: "dy-cal-misa", uid: "misa-20261114@jasminandedgar.com", start: E[0].at, end: DY.massEnd, venue: "misa",
+            sum: { es: "Misa · Boda de Jasmin y Edgar", en: "Ceremony · Jasmin & Edgar's Wedding" } },
+          { id: "dy-cal-recepcion", uid: "recepcion-20261114@jasminandedgar.com", start: E[1].at, end: E[7].at, venue: "recepcion",
+            sum: { es: "Recepción · Boda de Jasmin y Edgar", en: "Reception · Jasmin & Edgar's Wedding" } }
+        ];
+        const utc = ms => new Date(ms).toISOString().replace(/\.\d{3}/, "").replace(/[-:]/g, "");
+        const icsText = s => String(s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+        // RFC 5545: fold lines longer than 75 octets, never inside a UTF-8 character
+        const fold = line => {
+          let out = "", n = 0;
+          for (const ch of line) {
+            const cp = ch.codePointAt(0), b = cp < 0x80 ? 1 : cp < 0x800 ? 2 : cp < 0x10000 ? 3 : 4;
+            if (n + b > 75) { out += "\r\n "; n = 1; }
+            out += ch; n += b;
+          }
+          return out;
+        };
+        function buildIcs() {
+          const l = L(), stamp = utc(Date.now());
+          const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//jasminandedgar.com//Boda Jasmin y Edgar//" + l.toUpperCase(), "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+          CAL.forEach(c => {
+            const sum = icsText(c.sum[l]);
+            lines.push("BEGIN:VEVENT", "UID:" + c.uid, "DTSTAMP:" + stamp,
+              "DTSTART:" + utc(c.start), "DTEND:" + utc(c.end),
+              "SUMMARY:" + sum, "DESCRIPTION:" + icsText(CAL_DESC[l]),
+              "LOCATION:" + icsText(DY.venues[c.venue].address), "URL:https://jasminandedgar.com/");
+            ["-P1D", "-PT2H"].forEach(tr => lines.push("BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + sum, "TRIGGER:" + tr, "END:VALARM"));
+            lines.push("END:VEVENT");
+          });
+          lines.push("END:VCALENDAR");
+          return lines.map(fold).join("\r\n") + "\r\n";
+        }
+        function downloadIcs() {
+          const url = URL.createObjectURL(new Blob([buildIcs()], { type: "text/calendar;charset=utf-8" }));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = L() === "en" ? "jasmin-edgar-wedding.ics" : "boda-jasmin-edgar.ics";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        }
+        function googleUrl(c) {
+          const l = L();
+          return "https://calendar.google.com/calendar/render?action=TEMPLATE"
+            + "&text=" + encodeURIComponent(c.sum[l])
+            + "&dates=" + utc(c.start) + "/" + utc(c.end)
+            + "&ctz=America%2FChicago"
+            + "&details=" + encodeURIComponent(CAL_DESC[l])
+            + "&location=" + encodeURIComponent(DY.venues[c.venue].address);
+        }
+
+        const dlg = $("dy-cal");
+        let calTrigger = null;
+        function calRefresh() { CAL.forEach(c => { const a = $(c.id); if (a) a.href = googleUrl(c); }); }
+        function restoreFocus() {
+          const t = calTrigger;
+          calTrigger = null;
+          if (!t || !t.isConnected || typeof t.focus !== "function") return;
+          try { t.focus({ preventScroll: true }); } catch (err) {}
+        }
+        function openCal(trigger) {
+          calTrigger = trigger;
+          calRefresh();
+          if (typeof dlg.showModal === "function") { if (!dlg.open) dlg.showModal(); return; }
+          dlg.classList.add("dy-cal-nomodal");
+          dlg.setAttribute("open", "");
+          const first = dlg.querySelector("a, button");
+          if (first) first.focus();
+        }
+        function closeCal() {
+          if (typeof dlg.close === "function") { if (dlg.open) dlg.close(); return; }
+          dlg.removeAttribute("open");
+          restoreFocus();
+        }
+        if (dlg) {
+          dlg.addEventListener("close", restoreFocus);                                  // Esc, backdrop and Close all end here
+          dlg.addEventListener("click", e => { if (e.target === dlg) closeCal(); });   // a tap on the backdrop
+          dlg.addEventListener("keydown", e => { if (e.key === "Escape" && typeof dlg.showModal !== "function") closeCal(); });
+          const x = $("dy-cal-close");
+          if (x) x.addEventListener("click", closeCal);
+          CAL.forEach(c => { const a = $(c.id); if (a) a.addEventListener("click", () => a.classList.add("dy-done")); });
+          calRefresh();
+        }
+
+        // Takes over the original Add-to-calendar handler without editing it: this capture-phase listener on window
+        // runs before the button's own listener and stops the click there. #thanks-cal calls #add-calendar.click(),
+        // which dispatches the same kind of click, so it lands here too.
+        window.addEventListener("click", e => {
+          const btn = e.target && e.target.closest ? e.target.closest("#add-calendar") : null;
+          if (!btn || (!isApple && !dlg)) return;       // no chooser in the page: let the original handler run
+          e.stopPropagation();
+          e.preventDefault();
+          try { if (typeof setMenu === "function") setMenu(false); } catch (err) {}
+          if (isApple) { downloadIcs(); return; }
+          const ae = document.activeElement;
+          openCal(ae && ae !== document.body && ae !== document.documentElement ? ae : btn);
+        }, true);
+
+        /* ---- The clock (?ahora=2026-11-14T19:25 rehearses the day, read as Houston time) ---- */
+        let houstonFmt = null;
+        try {
+          houstonFmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", hour12: false,
+            year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" });
+        } catch (err) {}
+        // Houston wall clock at an instant, written as a UTC timestamp (date math only)
+        function wall(ms) {
+          const p = {};
+          houstonFmt.formatToParts(new Date(ms)).forEach(x => { p[x.type] = x.value; });
+          return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+        }
+        function parseAhora(s) {
+          s = String(s || "").trim();
+          if (/(?:Z|[+-]\d{2}:?\d{2})$/i.test(s)) return Date.parse(s);
+          const m = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/.exec(s);
+          if (!m) return NaN;
+          const w = Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 0), +(m[5] || 0), +(m[6] || 0));
+          let t = w + 6 * 3600000;                                   // CST first guess
+          try { if (houstonFmt) t += w - wall(t); } catch (err) {}   // corrects for CDT on other dates
+          return t;
+        }
+        let skew = 0;
+        const ahora = parseAhora(new URLSearchParams(location.search).get("ahora"));
+        if (!isNaN(ahora)) skew = ahora - Date.now();
+        const now = () => Date.now() + skew;
+        function daysMarried(t) {
+          let d;
+          try { d = Math.floor(wall(t) / 864e5) - Math.floor(Date.UTC(2026, 10, 14) / 864e5); }
+          catch (err) { d = Math.floor((t - DY.dayStart) / 864e5); }
+          return Math.max(1, d);
+        }
+
+        /* ---- Phases of the day ---- */
+        function phaseAt(t) {
+          if (t < DY.dayStart) return { id: "before" };
+          if (t < DY.soon) return { id: "pre" };
+          if (t < E[0].at) return { id: "soon" };
+          if (t < DY.massEnd) return { id: "mass", cur: 0, next: 1 };
+          if (t < E[1].at) return { id: "free", next: 1 };
+          if (t < E[7].at) {
+            let cur = 1;
+            for (let i = 2; i < 7; i++) if (E[i].at <= t) cur = i;
+            return { id: "party", cur: cur, next: cur + 1 };
+          }
+          if (t < DY.after) return { id: "thanks", cur: 7 };
+          return { id: "married" };
+        }
+
+        const S = {
+          es: {
+            kicker: "Hoy · Sábado 14 de noviembre", date: "Sábado 14 de noviembre, 2026",
+            now: "Ahora", next: "Sigue", day: "Hoy es el día", arrive: "Llega a las",
+            soon: "La misa empieza en", silence: "Por favor silencia tu teléfono", free: "Tiempo libre",
+            inT: "en", go: "Cómo llegar", route: "De la iglesia a la recepción", schedule: "Ver el programa",
+            thanks: "Gracias por celebrar con nosotros", married: "¡Nos casamos!",
+            ago: n => (n === 1 ? "Casados hace 1 día" : "Casados hace " + n + " días")
+          },
+          en: {
+            kicker: "Today · Saturday, November 14", date: "Saturday, November 14, 2026",
+            now: "Now", next: "Next", day: "Today is the day", arrive: "Please arrive by",
+            soon: "The ceremony begins in", silence: "Please silence your phone", free: "Free time",
+            inT: "in", go: "Directions", route: "From the church to the reception", schedule: "See the schedule",
+            thanks: "Thank you for celebrating with us", married: "We got married!",
+            ago: n => (n === 1 ? "Married 1 day ago" : "Married " + n + " days ago")
+          }
+        };
+        function dur(ms) {
+          const m = Math.max(1, Math.ceil(ms / 60000));
+          if (m < 60) return m + " min";
+          const h = Math.floor(m / 60), r = m % 60;
+          return r ? h + " h " + r + " min" : h + " h";
+        }
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+        const T = s => '<span class="dy-t">' + esc(s) + "</span>";
+        const nm = ev => ev[L()] || ev.en;
+
+        function column(label, ev, place, until) {
+          return '<div class="dy-col">'
+            + '<p class="dy-lbl">' + esc(label) + '<span class="dy-sr">:</span></p>'
+            + '<svg class="dy-ico" aria-hidden="true" focusable="false"><use href="' + esc(ev.icon) + '"/></svg>'
+            + '<p class="dy-name">' + esc(nm(ev)) + "</p>"
+            + '<p class="dy-time">' + esc(ev.t) + "</p>"
+            + (place ? '<p class="dy-place">' + esc(DY.venues[ev.venue].name) + "</p>" : "")
+            + (until ? '<p class="dy-rel" data-dy-until="' + until + '"></p>' : "")
+            + "</div>";
+        }
+        function build(ph, days, late) {
+          const s = S[L()];
+          let head = "", subs = [], cols = [], venue = "", route = false, sched = true;
+          if (ph.id === "pre") {
+            head = esc(s.day);
+            subs = [esc(s.arrive) + " " + T("11:40 AM") + " · " + esc(nm(E[0])) + " " + T(E[0].t) + " · " + esc(DY.venues.misa.name)];
+            venue = "misa";
+          } else if (ph.id === "soon") {
+            head = esc(s.soon) + ' <span class="dy-num" data-dy-until="' + E[0].at + '" data-dy-bare=""></span>';
+            subs = [esc(s.silence)];
+            cols = [column(s.next, E[0], false, 0)];
+            venue = "misa";
+          } else if (ph.id === "mass") {
+            cols = [column(s.now, E[0], false, 0), column(s.next, E[1], true, E[1].at)];
+            venue = "misa";
+          } else if (ph.id === "free") {
+            head = esc(s.free);
+            cols = [column(s.next, E[1], true, E[1].at)];
+            venue = "recepcion";
+            route = true;
+          } else if (ph.id === "party") {
+            cols = [column(s.now, E[ph.cur], false, 0), column(s.next, E[ph.next], false, E[ph.next].at)];
+            venue = "recepcion";
+          } else if (ph.id === "thanks") {
+            head = esc(s.thanks);
+            subs = [[0, 1, 7].map(i => esc(nm(E[i])) + " " + T(E[i].t)).join(" · ")];
+            sched = false;
+          } else {
+            head = esc(s.married);
+            subs = [esc(s.ago(days)), esc(s.thanks)];
+            sched = false;
+          }
+          const v = venue ? DY.venues[venue] : null;
+          return '<svg class="dy-mono" aria-hidden="true" focusable="false"><use href="#mono"/></svg>'
+            + '<h2 class="dy-kicker" id="dy-kicker">' + esc(late ? s.date : s.kicker) + "</h2>"
+            + (head ? '<p class="script dy-head">' + head + "</p>" : "")
+            + subs.map(x => '<p class="dy-sub">' + x + "</p>").join("")
+            + (cols.length ? '<div class="dy-pair' + (cols.length === 1 ? " dy-one" : "") + '">'
+                + cols.join('<div class="dy-rule" aria-hidden="true"></div>') + "</div>" : "")
+            + (v ? '<a class="btn btn-ink dy-go" href="' + esc(v.maps) + '" target="_blank" rel="noopener" aria-describedby="dy-addr">' + esc(s.go) + "</a>"
+                + '<p class="dy-addr" id="dy-addr"><b>' + esc(v.name) + "</b><br>" + esc(v.street) + " · " + esc(v.city) + "</p>" : "")
+            + (route ? '<a class="text-link dy-route" href="' + esc(DY.route) + '" target="_blank" rel="noopener">' + esc(s.route) + "</a>" : "")
+            + (sched ? '<a class="text-link" href="#schedule">' + esc(s.schedule) + "</a>" : "");
+        }
+
+        const aside = $("dy-hoy"), card = $("dy-card");
+        let lastKey = "", nowLi = null, timer = 0;
+
+        // Only the minutes change between phases, so they are updated in place (keeps focus and avoids re-announcing)
+        function tickRel(t) {
+          const s = S[L()];
+          card.querySelectorAll("[data-dy-until]").forEach(el => {
+            const d = dur(+el.getAttribute("data-dy-until") - t);
+            const txt = el.hasAttribute("data-dy-bare") ? d : s.inT + " " + d;
+            if (el.textContent !== txt) el.textContent = txt;
+          });
+        }
+        function markNow(li) {
+          if (nowLi && nowLi !== li) {
+            nowLi.classList.remove("dy-now");
+            nowLi.querySelectorAll(".dy-ring, .dy-now-sr").forEach(n => n.remove());
+          }
+          nowLi = li || null;
+          if (!nowLi) return;
+          nowLi.classList.add("dy-now");
+          const mid = nowLi.querySelector(".tl-mid");
+          if (mid && !mid.querySelector(".dy-ring")) {
+            const r = document.createElement("span");
+            r.className = "dy-ring";
+            r.setAttribute("aria-hidden", "true");
+            mid.appendChild(r);
+          }
+          const box = nowLi.querySelector(".tl-text") || nowLi;
+          let sr = box.querySelector(".dy-now-sr");
+          if (!sr) {
+            sr = document.createElement("span");
+            sr.className = "dy-sr dy-now-sr";
+            box.insertBefore(sr, box.firstChild);
+          }
+          const label = S[L()].now;
+          if (sr.textContent !== label) sr.textContent = label;
+        }
+        function render() {
+          clearTimeout(timer);
+          try {
+            const t = now(), ph = phaseAt(t), live = ph.id !== "before";
+            if (aside && card) {
+              if (aside.hidden === live) aside.hidden = !live;
+              if (live) {
+                const days = ph.id === "married" ? daysMarried(t) : 0, late = t >= DY.midnight;
+                const key = [ph.id, L(), ph.cur, ph.next, days, late ? 1 : 0].join("|");
+                if (key !== lastKey) {
+                  const hadFocus = card.contains(document.activeElement);
+                  lastKey = key;
+                  card.innerHTML = build(ph, days, late);
+                  if (hadFocus) { const f = card.querySelector(".dy-go, a"); if (f) f.focus({ preventScroll: true }); }
+                }
+                tickRel(t);
+              }
+            }
+            markNow(ph.cur != null && E[ph.cur] ? E[ph.cur].li : null);
+          } catch (err) { console.error(err); }
+          // every 30 s, on the :00 / :30 marks, so each change lands on its minute
+          timer = setTimeout(render, 30000 - (now() % 30000) + 40);
+        }
+
+        // Language: setLang() writes <html lang>, so watch that; also answer a "langchange" event if one is dispatched
+        let queued = false;
+        const onLang = () => {
+          if (queued) return;
+          queued = true;
+          Promise.resolve().then(() => { queued = false; render(); calRefresh(); });
+        };
+        try { new MutationObserver(onLang).observe(document.documentElement, { attributes: true, attributeFilter: ["lang"] }); } catch (err) {}
+        document.addEventListener("langchange", onLang);
+        window.addEventListener("langchange", onLang);
+        document.addEventListener("visibilitychange", () => { if (!document.hidden) render(); });
+        window.addEventListener("pageshow", e => { if (e.persisted) render(); });
+
+        render();
+
+        // QR code (/#rsvp): from November 14 the guide matters more than the form, so land on it.
+        // Registered after the existing load handler, and fires just after its 50 ms jump. RSVP stays one tap away (header pill).
+        window.addEventListener("load", () => {
+          if (location.hash !== "#rsvp" || !aside || aside.hidden) return;
+          setTimeout(() => {
+            try { aside.scrollIntoView({ behavior: "instant", block: "start" }); }
+            catch (err) { aside.scrollIntoView(true); }
+          }, 60);
+        });
+      }
+      try { dyMain(); } catch (err) { console.error("Hoy:", err); }
+    })();
+
   </script>
 </body>
 </html>

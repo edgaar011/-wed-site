@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="theme-color" content="#FAF3EA" />
+  <title>Enlaces · Jasmin &amp; Edgar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%237A1F2B'/%3E%3Ctext x='32' y='41' font-family='Georgia,serif' font-size='22' letter-spacing='2' fill='%23FAF3EA' text-anchor='middle'%3EE%E2%99%A5J%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #FAF3EA;
+      --paper-2: #F2E7DB;
+      --ink: #7A1F2B;
+      --ink-deep: #3F1218;
+      --text: #4A3033;
+      --muted: #85696B;
+      --line: rgba(122, 31, 43, 0.2);
+      --cream: #FFF8EE;
+      --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+      --caps: 'Cinzel', 'Trajan Pro', Georgia, serif;
+      --script: 'Great Vibes', 'Snell Roundhand', cursive;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      min-height: 100vh; overflow-x: hidden;
+      background: var(--paper); color: var(--text);
+      font-family: var(--serif); font-size: 19px; line-height: 1.55; font-variant-numeric: lining-nums;
+      -webkit-font-smoothing: antialiased;
+      padding: 22px 16px calc(64px + env(safe-area-inset-bottom));
+    }
+    button, input, textarea { font: inherit; color: inherit; }
+    a { color: inherit; }
+    [hidden] { display: none !important; }
+    .wrap { max-width: 760px; margin: 0 auto; }
+    .caps-sm { font-family: var(--caps); font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); }
+
+    .bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 28px; }
+    .seg { display: inline-flex; border: 1px solid var(--ink); }
+    .seg button { min-width: 58px; min-height: 48px; padding: 0 14px; border: 0; background: transparent; color: var(--ink); font-family: var(--caps); font-size: 0.76rem; letter-spacing: 0.18em; cursor: pointer; }
+    .seg button + button { border-left: 1px solid var(--ink); }
+    .seg button[aria-pressed="true"] { background: var(--ink); color: var(--cream); }
+
+    header { text-align: center; margin-bottom: 28px; }
+    h1 { font-family: var(--script); font-weight: 400; color: var(--ink); font-size: clamp(2.6rem, 11vw, 3.4rem); line-height: 1.1; margin-top: 6px; }
+    .title { font-family: var(--caps); text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink); font-size: clamp(0.92rem, 3.6vw, 1.12rem); margin-top: 6px; }
+    .hdiv { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--ink); margin-top: 16px; }
+    .hdiv::before, .hdiv::after { content: ""; width: 72px; height: 1px; background: currentColor; opacity: 0.55; }
+    .hdiv svg { width: 13px; height: 13px; }
+    .intro { max-width: 36ch; margin: 16px auto 0; font-style: italic; color: var(--text); font-size: 1.08rem; line-height: 1.45; }
+
+    .card { background: var(--cream); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: -7px; padding: 26px 20px 22px; box-shadow: 0 30px 60px -34px rgba(63, 18, 24, 0.35); }
+    .lbl { display: block; font-family: var(--caps); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.66rem; color: var(--muted); margin-bottom: 8px; }
+    textarea { display: block; width: 100%; min-height: 200px; resize: vertical; border: 1px solid var(--line); border-radius: 0; background: #FFFDF9; padding: 12px 14px; font-size: 1.15rem; line-height: 1.5; outline: none; -webkit-appearance: none; appearance: none; }
+    textarea:focus { border-color: var(--ink); }
+    .hint { margin-top: 8px; font-style: italic; color: var(--text); font-size: 1rem; line-height: 1.4; }
+    .preview { margin-top: 18px; padding: 12px 14px; border-left: 2px solid var(--ink); background: var(--paper); }
+    .preview-text { font-style: italic; color: var(--text); margin-top: 4px; overflow-wrap: anywhere; }
+
+    .count { text-align: center; margin: 28px 0 12px; font-family: var(--caps); font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink); }
+    .empty { text-align: center; font-style: italic; color: var(--muted); padding: 24px 0; }
+    .rows { list-style: none; display: grid; gap: 12px; }
+    .row { background: var(--cream); border: 1px solid var(--line); padding: 14px 16px 16px; }
+    .row.done { box-shadow: inset 4px 0 0 var(--ink); }
+    .head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px; }
+    .name { font-family: var(--script); color: var(--ink); font-size: 1.9rem; line-height: 1.2; overflow-wrap: anywhere; }
+    .seats { font-family: var(--caps); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text); }
+    .warn { font-style: italic; color: var(--ink); font-size: 0.98rem; }
+    .link { display: block; margin: 6px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); color: var(--text); font-size: 0.98rem; line-height: 1.35; text-decoration: none; overflow-wrap: anywhere; }
+    .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .b { display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 8px 10px; border: 1px solid var(--ink); border-radius: 0; background: transparent; color: var(--ink); font-family: var(--caps); font-size: 0.66rem; letter-spacing: 0.12em; line-height: 1.3; text-transform: uppercase; text-align: center; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .b-ink { background: var(--ink); color: var(--cream); }
+    .sent { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border: 1px dashed rgba(122, 31, 43, 0.4); cursor: pointer; font-style: italic; color: var(--ink); }
+    .sent input { width: 22px; height: 22px; accent-color: var(--ink); cursor: pointer; }
+    .b:focus-visible, .seg button:focus-visible, .link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .sent:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+    .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    @media (min-width: 640px) { .acts { grid-template-columns: repeat(4, 1fr); } .card { padding: 32px 30px 26px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="bar">
+      <span class="caps-sm" id="lang-label" data-t="msgLang">Idioma del mensaje</span>
+      <div class="seg" role="group" aria-labelledby="lang-label">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+
+    <header>
+      <p class="caps-sm" data-t="kicker">Solo para Jasmin y Edgar</p>
+      <h1>Jasmin &amp; Edgar</h1>
+      <p class="title" data-t="title">Enlaces personales</p>
+      <div class="hdiv" aria-hidden="true"><svg viewBox="0 0 10 10"><path fill="currentColor" d="M5 9.2C4.4 8.3 1 6.6 1 3.9A2.1 2.1 0 0 1 5 2.8 2.1 2.1 0 0 1 9 3.9C9 6.6 5.6 8.3 5 9.2z"/></svg></div>
+      <p class="intro" data-t="intro"></p>
+    </header>
+
+    <section class="card" aria-labelledby="list-label">
+      <label class="lbl" id="list-label" for="list" data-t="listLabel">Familias, una por renglón</label>
+      <textarea id="list" rows="7" spellcheck="false" autocomplete="off" autocapitalize="words" aria-describedby="list-hint"></textarea>
+      <p class="hint" id="list-hint" data-t="hint"></p>
+      <div class="preview">
+        <p class="caps-sm" data-t="previewLabel">Así se verá el mensaje</p>
+        <p class="preview-text" id="preview-text"></p>
+      </div>
+    </section>
+
+    <p class="count" id="count"></p>
+    <p class="empty" id="empty" data-t="empty"></p>
+    <ol class="rows" id="rows"></ol>
+    <p class="sr" id="live" aria-live="polite"></p>
+  </main>
+
+  <script>
+    (() => {
+      const S = {
+        es: {
+          msgLang: "Idioma del mensaje",
+          kicker: "Solo para Jasmin y Edgar",
+          title: "Enlaces personales",
+          intro: "Escribe una familia por renglón, con una coma y el número de lugares. Cada una recibe su propio enlace, listo para WhatsApp o mensaje de texto.",
+          listLabel: "Familias, una por renglón",
+          placeholder: "Familia García, 4\nTía Rosa, 2\nFamilia Mendoza, 5",
+          hint: "El número de lugares es opcional (de 1 a 10). La lista y las marcas de enviado se guardan solo en este dispositivo.",
+          previewLabel: "Así se verá el mensaje",
+          empty: "Aquí aparecerán los enlaces.",
+          count: (done, all) => done + " de " + all + " enviados",
+          seats: n => (n === 1 ? "1 lugar" : n + " lugares"),
+          noSeats: "Sin número de lugares",
+          capped: "Máximo 10 lugares",
+          long: "El nombre se acortó a 60 letras",
+          copy: "Copiar enlace",
+          copied: "¡Enlace copiado!",
+          copyFail: "Mantén presionado el enlace para copiarlo",
+          wa: "Enviar por WhatsApp",
+          sms: "Mensaje de texto",
+          sent: "Enviado",
+          msg: (name, link) => "¡Hola, " + name + "! Con mucho cariño les compartimos nuestra invitación: " + link + " · Jasmin y Edgar"
+        },
+        en: {
+          msgLang: "Message language",
+          kicker: "Just for Jasmin & Edgar",
+          title: "Personal links",
+          intro: "Type one household per line, with a comma and the number of seats. Each one gets its own link, ready for WhatsApp or a text message.",
+          listLabel: "Households, one per line",
+          placeholder: "Familia García, 4\nTía Rosa, 2\nFamilia Mendoza, 5",
+          hint: "The number of seats is optional (1 to 10). The list and the sent marks are saved only on this device.",
+          previewLabel: "Here is how the message will read",
+          empty: "Your links will appear here.",
+          count: (done, all) => done + " of " + all + " sent",
+          seats: n => (n === 1 ? "1 seat" : n + " seats"),
+          noSeats: "No seat count",
+          capped: "10 seats at most",
+          long: "The name was shortened to 60 characters",
+          copy: "Copy link",
+          copied: "Link copied!",
+          copyFail: "Press and hold the link to copy it",
+          wa: "Send on WhatsApp",
+          sms: "Text message",
+          sent: "Sent",
+          msg: (name, link) => "Hello, " + name + "! With love, here is our wedding invitation: " + link + " · Jasmin & Edgar"
+        }
+      };
+      const KEY = { list: "ps-enlaces-list", sent: "ps-enlaces-sent", lang: "ps-enlaces-lang" };
+      const read = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } };
+      const write = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+      const $ = id => document.getElementById(id);
+      const list = $("list"), rowsEl = $("rows"), live = $("live");
+      let lang = read(KEY.lang, "es") === "en" ? "en" : "es";
+      let sent = {};
+      try { const v = JSON.parse(read(KEY.sent, "{}")); if (v && typeof v === "object") sent = v; } catch (e) {}
+      list.value = read(KEY.list, "");
+
+      // "Familia García, 4" -> { name: "Familia García", n: 4 }. The number is optional and clamped to 1-10.
+      function parse(text) {
+        return text.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
+          let name = line, n = null, capped = false;
+          const m = line.match(/^(.*?)[\s,;]+(\d{1,3})$/);
+          if (m && m[1].trim()) { name = m[1]; n = parseInt(m[2], 10); }
+          name = name.replace(/[\s,;]+$/, "").replace(/\s+/g, " ").trim();
+          if (n !== null && n < 1) n = null;
+          if (n !== null && n > 10) { n = 10; capped = true; }
+          const long = name.length > 60;
+          name = name.slice(0, 60).trim();
+          return { name, n, capped, long, key: name.toLocaleLowerCase("es") };
+        }).filter(r => r.name);
+      }
+      function linkFor(r) {
+        return "https://jasminandedgar.com/?para=" + encodeURIComponent(r.name)
+          + (r.n ? "&pases=" + r.n : "")
+          + (lang === "en" ? "&lang=en" : "");
+      }
+
+      let copyTimer = 0;
+      async function copy(text, btn) {
+        let ok = false;
+        try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); ok = true; } } catch (e) {}
+        if (!ok) {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;";
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, text.length);
+          try { ok = document.execCommand("copy"); } catch (e) {}
+          ta.remove();
+          btn.focus();
+        }
+        const t = S[lang];
+        btn.textContent = ok ? t.copied : t.copyFail;
+        live.textContent = ok ? t.copied : t.copyFail;
+        clearTimeout(copyTimer);
+        copyTimer = setTimeout(() => { btn.textContent = S[lang].copy; live.textContent = ""; }, 2200);
+      }
+
+      function count(rows) {
+        const done = rows.filter(r => sent[r.key]).length;
+        $("count").textContent = rows.length ? S[lang].count(done, rows.length) : "";
+      }
+
+      function row(r, i, t) {
+        const li = document.createElement("li");
+        li.className = "row" + (sent[r.key] ? " done" : "");
+        li.innerHTML = '<div class="head"><p class="name"></p><p class="seats"></p></div>'
+          + '<p class="warn" hidden></p>'
+          + '<a class="link" target="_blank" rel="noopener"></a>'
+          + '<div class="acts"><button type="button" class="b b-ink"></button>'
+          + '<a class="b wa" target="_blank" rel="noopener"></a>'
+          + '<a class="b sms"></a>'
+          + '<label class="sent"><input type="checkbox"><span></span></label></div>';
+        const q = s => li.querySelector(s), id = "row-" + i, link = linkFor(r), msg = t.msg(r.name, link);
+        q(".name").id = id;
+        q(".name").textContent = r.name;
+        q(".seats").textContent = r.n ? t.seats(r.n) : t.noSeats;
+        const warn = [r.capped && t.capped, r.long && t.long].filter(Boolean).join(" · ");
+        if (warn) { q(".warn").textContent = warn; q(".warn").hidden = false; }
+        q(".link").href = link;
+        q(".link").textContent = link;
+        const copyBtn = q("button.b"), wa = q(".wa"), sms = q(".sms"), box = q(".sent input");
+        copyBtn.textContent = t.copy;
+        wa.textContent = t.wa;
+        wa.href = "https://wa.me/?text=" + encodeURIComponent(msg);
+        sms.textContent = t.sms;
+        sms.href = "sms:?&body=" + encodeURIComponent(msg);
+        q(".sent span").textContent = t.sent;
+        box.checked = !!sent[r.key];
+        [copyBtn, wa, sms, box].forEach(el => el.setAttribute("aria-describedby", id));
+        copyBtn.addEventListener("click", () => copy(link, copyBtn));
+        box.addEventListener("change", () => {
+          if (box.checked) sent[r.key] = Date.now(); else delete sent[r.key];
+          write(KEY.sent, JSON.stringify(sent));
+          li.classList.toggle("done", box.checked);
+          count(parse(list.value));
+        });
+        return li;
+      }
+
+      function renderRows() {
+        const t = S[lang], rows = parse(list.value);
+        rowsEl.textContent = "";
+        rows.forEach((r, i) => rowsEl.appendChild(row(r, i, t)));
+        $("empty").hidden = rows.length > 0;
+        const sample = rows[0] || { name: "Familia García", n: 4 };
+        $("preview-text").textContent = t.msg(sample.name, linkFor(sample));
+        count(rows);
+      }
+      function render() {
+        const t = S[lang];
+        document.documentElement.lang = lang;
+        document.querySelectorAll("[data-t]").forEach(el => { el.textContent = t[el.dataset.t]; });
+        document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+        list.placeholder = t.placeholder;
+        renderRows();
+      }
+
+      let typing = 0;
+      list.addEventListener("input", () => {
+        write(KEY.list, list.value);
+        clearTimeout(typing);
+        typing = setTimeout(renderRows, 160);
+      });
+      document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+        lang = b.dataset.lang === "en" ? "en" : "es";
+        write(KEY.lang, lang);
+        render();
+      }));
+      render();
+    })();
+  </script>
+</body>
+</html>
