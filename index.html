@@ -1860,13 +1860,17 @@
       }
 
       // Resolves true once a frame is loaded and decoded, false if it failed (a missing frame is simply skipped)
+      // Uses load/error events only: Safari's img.decode() can hang forever, which used to leave the twirl frozen on iPhone.
+      // A timeout makes sure one slow frame can never stop the rest from playing.
       function settle(img) {
-        const viaEvents = () => new Promise(done => {
-          if (img.complete) return done(img.naturalWidth > 0);
-          img.addEventListener("load", () => done(true), { once: true });
-          img.addEventListener("error", () => done(false), { once: true });
+        return new Promise(done => {
+          if (img.complete && img.naturalWidth > 0) return done(true);
+          let finished = false;
+          const end = ok => { if (!finished) { finished = true; done(ok); } };
+          img.addEventListener("load", () => end(true), { once: true });
+          img.addEventListener("error", () => end(false), { once: true });
+          setTimeout(() => end(img.naturalWidth > 0), 12000);
         });
-        return img.decode ? img.decode().then(() => true, viaEvents) : viaEvents();
       }
 
       function load() {
@@ -1936,7 +1940,7 @@
         }, { rootMargin: "350% 0px" }).observe(sec);
         new IntersectionObserver(entries => {
           inView = entries[entries.length - 1].isIntersecting;
-          if (inView) { measure(); schedule(); }
+          if (inView) { load(); measure(); schedule(); }
         }).observe(sec);
       }
       window.addEventListener("scroll", () => { if (inView) schedule(); }, { passive: true });
