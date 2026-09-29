@@ -728,7 +728,7 @@
 
     let lang = "en";
 
-    // ---------- Language (English by default; Spanish only when chosen) ----------
+    // ---------- Language (Spanish by default; English when chosen) ----------
     const translatable = document.querySelectorAll("[data-es]");
     translatable.forEach(el => { el.dataset.en = el.innerHTML; });
 
@@ -760,7 +760,7 @@
     let saved = null;
     try { saved = localStorage.getItem("lang"); } catch (e) {}
     const urlLang = new URLSearchParams(location.search).get("lang");
-    setLang(urlLang === "es" || urlLang === "en" ? urlLang : saved === "es" ? "es" : "en");
+    setLang(urlLang === "es" || urlLang === "en" ? urlLang : saved === "en" ? "en" : "es");
 
     // ---------- Reveal on scroll ----------
     const io = new IntersectionObserver(entries => {
@@ -862,6 +862,13 @@
         submit.disabled = false;
         submit.innerHTML = label;
       }
+    });
+
+    // ---------- Jump to a linked section (the QR code opens /#rsvp) ----------
+    // Reveal animations shift the layout after load, so the browser's own jump can land short or not happen.
+    window.addEventListener("load", () => {
+      const target = location.hash && document.getElementById(location.hash.slice(1));
+      if (target) setTimeout(() => target.scrollIntoView({ behavior: "instant", block: "start" }), 50);
     });
   </script>
 </body>

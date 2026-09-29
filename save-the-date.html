@@ -714,7 +714,11 @@
       document.getElementById('footer-names').innerText   = s.footerNames;
       document.getElementById('footer-date').innerText    = s.footerDate;
       document.getElementById('footer-credit-label').innerText = s.footerCredit;
+      document.documentElement.lang = isEnglish ? 'en' : 'es';
     }
+
+    // Spanish by default
+    setLanguage(false);
 
     // ── Slideshow ──
     // Add your photo filenames here — just drop them in the same folder as this file
