@@ -575,7 +575,7 @@
     main > .band { display: none; }
 
     .gr { position: relative; background: var(--ink-deep); color: var(--cream); padding: clamp(72px, 11vw, 120px) 0; }
-    .js .gr { height: 180vh; height: 180svh; padding: 0; }
+    .js .gr { height: 260vh; height: 260svh; padding: 0; }
     .gr-stage {
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
       padding: 20px 16px; text-align: center;
@@ -1186,15 +1186,15 @@
         <div class="gr-fig">
           <div class="gr-frame">
             <div class="gr-print" role="img" aria-label="Edgar twirls Jasmin on the lawn" data-es-label="Edgar gira a Jasmin sobre el pasto">
-              <img src="giro-1.jpg" width="720" height="960" alt="" loading="lazy" decoding="async" />
-              <img data-src="giro-2.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-3.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-4.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-5.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-6.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-7.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-8.jpg" width="720" height="960" alt="" decoding="async" />
-              <img data-src="giro-9.jpg" width="720" height="960" alt="" decoding="async" />
+              <img src="giro-1.jpg" width="540" height="720" alt="" loading="lazy" decoding="async" />
+              <img data-src="giro-2.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-3.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-4.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-5.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-6.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-7.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-8.jpg" width="540" height="720" alt="" decoding="async" />
+              <img data-src="giro-9.jpg" width="540" height="720" alt="" decoding="async" />
             </div>
             <svg class="gr-orn" aria-hidden="true"><use href="#heart"/></svg>
           </div>
@@ -1836,6 +1836,14 @@
         easeTimer = setTimeout(() => print.classList.remove("gr-ease"), 340);
       }
 
+      let tgt = 0, chasing = false;
+      function chase() {
+        const d = tgt - atF;
+        if (playing || Math.abs(d) < 0.02) { if (!playing) paint(tgt); chasing = false; return; }
+        paint(atF + Math.sign(d) * Math.min(Math.abs(d), Math.max(0.14, Math.abs(d) * 0.2)));
+        requestAnimationFrame(chase);
+      }
+
       function update() {
         queued = false;
         if (!inView || playing || !live()) return;
@@ -1843,7 +1851,9 @@
         setCaption(p > 0.8);
         if (!ready) return;
         if (soft) { soft = false; ease(); }
-        paint(p * (frames.length - 1));
+        // Glide toward the scroll position instead of jumping, so even a fast flick plays the whole twirl
+        tgt = p * (frames.length - 1);
+        if (!chasing) { chasing = true; requestAnimationFrame(chase); }
       }
       function schedule() {
         if (!queued) { queued = true; requestAnimationFrame(update); }
@@ -1923,7 +1933,7 @@
         new IntersectionObserver(entries => {
           near = entries[entries.length - 1].isIntersecting;
           if (near) load();
-        }, { rootMargin: "150% 0px" }).observe(sec);
+        }, { rootMargin: "350% 0px" }).observe(sec);
         new IntersectionObserver(entries => {
           inView = entries[entries.length - 1].isIntersecting;
           if (inView) { measure(); schedule(); }
