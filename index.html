@@ -1063,7 +1063,7 @@
             <p class="it">With the blessing of God and our parents</p>
           </div>
           <div class="pair">
-            <p class="caps">Tenemos el honor de invitarles a celebrar</p>
+            <p class="caps">Tenemos el honor de invitarlos a celebrar</p>
             <p class="it">we joyfully invite you to celebrate</p>
           </div>
           <p class="script title">Nuestra Boda</p>
@@ -1119,7 +1119,7 @@
         <div><b id="cd-m">00</b><small data-es="Minutos">Minutes</small></div><i>:</i>
         <div><b id="cd-s">00</b><small data-es="Segundos">Seconds</small></div>
       </div>
-      <p class="script reveal" data-es="hasta el sí">until we say I do</p>
+      <p class="script reveal" data-es="para dar el sí">until we say I do</p>
     </section>
 
     <!-- Celebration -->
@@ -1983,7 +1983,7 @@
           });
         }
 
-        // Language: rebuild the envelope's "Para"/"For", and re-wrap 'hasta el sí' after setLang swaps its text
+        // Language: rebuild the envelope's "Para"/"For", and re-wrap 'para dar el sí' after setLang swaps its text
         document.addEventListener("langchange", () => {
           const to = document.getElementById("env-to");
           if (to && guest) (to.querySelector(".sl-write") || to).textContent = (lang === "es" ? "Para " : "For ") + guest;
