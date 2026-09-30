@@ -1223,8 +1223,8 @@
         <div class="details-grid">
           <div class="detail reveal">
             <h3 class="caps" data-es="Vestimenta">Attire</h3>
-            <p class="it">Semi-formal</p>
-            <p data-es="Vístete para celebrar. Vestidos de cóctel, trajes, o pantalón de vestir con saco son perfectos.">Dress to celebrate. Cocktail dresses, suits, or dress pants with a blazer are all perfect.</p>
+            <p class="it" data-es="Semiformal, casual de negocios o vaquero">Semi-formal, business casual, or western</p>
+            <p data-es="Vístete para celebrar. Vestidos de cóctel, trajes, pantalón de vestir con saco, o tu mejor atuendo vaquero: botas y sombrero son bienvenidos.">Dress to celebrate. Cocktail dresses, suits, dress pants with a blazer, or your best western wear. Boots and hats welcome.</p>
           </div>
           <div class="detail reveal">
             <h3 class="caps" data-es="Llegada">Arrival</h3>
@@ -2679,7 +2679,7 @@
           block(row("SÁBADO 14 DE NOVIEMBRE DE 2026", "caps", 46, INK), row("Saturday, November 14, 2026 · Houston, Texas", "it", 48, MUTED)),
           block(row("MISA · 12:00 PM", "caps", 46, INK), row("Ceremony · Corpus Christi Catholic Church", "it", 48, TEXT), row("9900 Stella Link Rd, Houston TX 77025", "it", 48, TEXT)),
           block(row("RECEPCIÓN · 5:30 PM", "caps", 46, INK), row("Reception · Rancho Rio Grande Zacatecas", "it", 48, TEXT), row("5419 Schurmier Rd, Houston TX 77048", "it", 48, TEXT)),
-          block(row("LLEGAR 11:40 AM · SEMI-FORMAL", "caps", 46, INK), row("Arrive 11:40 AM · Semi-formal", "it", 48, MUTED))
+          block(row("LLEGAR 11:40 AM · SEMIFORMAL O VAQUERO", "caps", 46, INK), row("Arrive 11:40 AM · Semi-formal or western", "it", 48, MUTED))
         );
         if (mode !== "pass") out.push(block(row("CONFIRMA ANTES DEL 7 DE NOVIEMBRE", "caps", 46, INK), row("Please reply by November 7", "it", 48, MUTED)));
         return out;
@@ -2943,8 +2943,8 @@
         /* ---- Add to calendar: two events, each with its own address ---- */
         const isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent);
         const CAL_DESC = {
-          es: "Llega a las 11:40 AM · Semi-formal · jasminandedgar.com",
-          en: "Please arrive by 11:40 AM · Semi-formal · jasminandedgar.com"
+          es: "Llega a las 11:40 AM · Semiformal, casual de negocios o vaquero · jasminandedgar.com",
+          en: "Please arrive by 11:40 AM · Semi-formal, business casual, or western · jasminandedgar.com"
         };
         const CAL = [
           { id: "dy-cal-misa", uid: "misa-20261114@jasminandedgar.com", start: E[0].at, end: DY.massEnd, venue: "misa",
